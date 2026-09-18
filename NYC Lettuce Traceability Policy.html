@@ -1,0 +1,1299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NYC Produce Traceability Stakeholder Power Map</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    *, ::before, ::after {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      padding: 0;
+      background-color: #f8fafc;
+      color: #0f172a;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    .square-canvas-container {
+      width: 100%;
+      max-width: 720px;
+      aspect-ratio: 1 / 1;
+      margin: 0 auto;
+      position: relative;
+    }
+    .node-element {
+      transition: transform 0.15s ease, filter 0.15s ease;
+      cursor: pointer;
+    }
+    .node-element:hover {
+      filter: drop-shadow(0 0 8px rgba(15, 23, 42, 0.4));
+    }
+    .node-element:hover circle.node-core {
+      stroke-width: 3.5;
+    }
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-900 font-sans antialiased min-h-screen flex flex-col">
+  <header class="bg-white border-b border-slate-200 sticky top-0 z-40 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center space-x-3">
+        <div class="w-10 h-10 rounded-xl bg-emerald-600 text-white flex items-center justify-center font-bold shadow-md shadow-emerald-600/20 flex-shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
+          </svg>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-base sm:text-lg font-bold text-slate-900 leading-tight">NYC Institutional Produce Traceability</h1>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-emerald-100 text-emerald-800 border border-emerald-200">
+              Interactive Power Map
+            </span>
+          </div>
+          <p class="text-xs text-slate-500">Preventing Cyclospora in Vulnerable Patients • Mandating FSMA 204 Standards by Jan 2027</p>
+        </div>
+      </div>
+
+      <div class="flex items-center space-x-2">
+        <div class="inline-flex p-1 bg-slate-100 rounded-lg text-xs font-medium text-slate-600">
+          <button id="tab-btn-map" onclick="switchMainTab('map')" class="px-3 py-1.5 rounded-md bg-white text-slate-900 shadow-xs font-semibold transition">
+            Square Power Map
+          </button>
+          <button id="tab-btn-escalation" onclick="switchMainTab('escalation')" class="px-3 py-1.5 rounded-md hover:text-slate-900 transition">
+            Nursing Escalation
+          </button>
+          <button id="tab-btn-policy" onclick="switchMainTab('policy')" class="px-3 py-1.5 rounded-md hover:text-slate-900 transition">
+            Policy &amp; Mock Drill
+          </button>
+        </div>
+        <button onclick="toggleShareModal(true)" class="px-3 py-1.5 text-xs font-semibold rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          Share &amp; Export
+        </button>
+        <button onclick="window.print()" class="px-3 py-1.5 text-xs font-medium rounded-lg bg-slate-100 hover:bg-slate-200 text-slate-700 transition flex items-center gap-1">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+          Print
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-5 space-y-5">
+    <section class="bg-amber-50/80 border border-amber-200 rounded-xl p-3.5 sm:p-4 shadow-xs">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 text-xs">
+        <div class="flex items-start gap-2.5">
+          <div class="p-2 bg-amber-500/15 rounded-lg text-amber-800 flex-shrink-0 mt-0.5">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+          </div>
+          <div>
+            <span class="font-bold text-amber-950 uppercase tracking-wide mr-1.5">Regulatory Vulnerability:</span>
+            <span class="text-amber-900 leading-relaxed">
+              Federal FDA FSMA 204 produce traceability was delayed 30 months to <strong>July 2028</strong>. Current <strong>NYC Health Code §81.04</strong> only requires buying from "approved sources" with zero lot-retention for raw lettuce. The policy initiative establishes an earlier <strong>January 1, 2027</strong> institutional adoption mandate.
+            </span>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 flex-shrink-0 self-end sm:self-auto">
+          <span class="px-2 py-1 bg-amber-200/80 text-amber-900 rounded font-semibold text-[11px]">Gap: 2026 - 2028</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 1: SQUARE POWER MAP VIEW -->
+    <div id="tab-map" class="space-y-4">
+      <div class="bg-white border border-slate-200 rounded-xl p-3.5 shadow-xs flex flex-wrap items-center justify-between gap-3 text-xs">
+        <div class="flex items-center flex-wrap gap-1.5">
+          <span class="font-bold text-slate-500 mr-1">Hierarchy Tier:</span>
+          <button onclick="filterBySector('ALL')" id="filter-btn-ALL" class="px-2.5 py-1 rounded-md bg-slate-900 text-white font-semibold transition">All Tiers (12)</button>
+          <button onclick="filterBySector('TIER1_2')" id="filter-btn-TIER1_2" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition">Tiers 1 &amp; 2 (Apex / Health Dept)</button>
+          <button onclick="filterBySector('TIER3_4')" id="filter-btn-TIER3_4" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition">Tiers 3 &amp; 4 (Hospitals / CEO)</button>
+          <button onclick="filterBySector('TIER5')" id="filter-btn-TIER5" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition">Tier 5 (Clinical Disciplines)</button>
+          <button onclick="filterBySector('TIER6')" id="filter-btn-TIER6" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition">Tier 6 (Supply Chain)</button>
+        </div>
+
+        <div class="flex items-center gap-2">
+          <div class="relative">
+            <input type="text" id="stakeholderSearch" oninput="onSearchChange()" placeholder="Search department or rep..." class="text-xs pl-7 pr-3 py-1.5 border border-slate-200 rounded-lg focus:outline-emerald-600 w-44 sm:w-56 bg-slate-50">
+            <svg class="w-3.5 h-3.5 text-slate-400 absolute left-2 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+          </div>
+          <button onclick="resetGraphSelection()" class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 hover:bg-slate-100 font-medium">Reset</button>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-5 items-start">
+        <div class="lg:col-span-7 bg-white border border-slate-200 rounded-2xl p-4 sm:p-5 shadow-xs flex flex-col items-center">
+          <div class="w-full flex items-center justify-between border-b border-slate-100 pb-2.5 mb-3 flex-wrap gap-2">
+            <div>
+              <h2 class="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
+                <span>NYC Stakeholder Power Matrix</span>
+                <span class="text-[10px] uppercase font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">2D Coordinate Graph</span>
+              </h2>
+              <p class="text-[11px] text-slate-500">Department (Line 1) and Current Representative (Line 2) plotted together</p>
+            </div>
+            <div class="flex items-center gap-2">
+              <div class="inline-flex p-0.5 bg-slate-100 rounded-lg text-[11px] font-medium text-slate-600">
+                <button id="subview-btn-graph" onclick="toggleMapSubView('graph')" class="px-2.5 py-1 rounded-md bg-emerald-600 text-white font-semibold transition">
+                  Coordinate Chart
+                </button>
+                <button id="subview-btn-hierarchy" onclick="toggleMapSubView('hierarchy')" class="px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition">
+                  Vertical Hierarchy Tree
+                </button>
+              </div>
+              <div class="text-[11px] font-mono text-slate-500 hidden sm:block" id="liveCoordIndicator">Select node to inspect</div>
+            </div>
+          </div>
+
+          <!-- SUBVIEW 1: SQUARE COORDINATE GRAPH -->
+          <div id="subviewGraphContainer" class="w-full">
+            <div class="square-canvas-container bg-slate-50/70 rounded-xl border border-slate-200 relative overflow-hidden select-none">
+              <svg id="squareMapSvg" viewBox="0 0 800 800" class="w-full h-full block">
+                <defs>
+                  <marker id="arrowHead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                    <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
+                  </marker>
+                  <filter id="shadowGlow" x="-20%" y="-20%" width="140%" height="140%">
+                    <feDropShadow dx="0" dy="1" stdDeviation="2" flood-color="#0f172a" flood-opacity="0.15"/>
+                  </filter>
+                </defs>
+
+                <!-- Quadrant II: Top-Left -->
+                <rect x="100" y="60" width="320" height="320" fill="#fef3c7" fill-opacity="0.35" />
+                <!-- Quadrant I: Top-Right -->
+                <rect x="420" y="60" width="320" height="320" fill="#d1fae5" fill-opacity="0.4" />
+                <!-- Quadrant IV: Bottom-Left -->
+                <rect x="100" y="380" width="320" height="320" fill="#f1f5f9" fill-opacity="0.5" />
+                <!-- Quadrant III: Bottom-Right -->
+                <rect x="420" y="380" width="320" height="320" fill="#dbeafe" fill-opacity="0.38" />
+
+                <!-- Quadrant Watermarks -->
+                <text x="115" y="85" font-size="11" font-weight="700" fill="#b45309" letter-spacing="0.5">QUADRANT II: KEEP SATISFIED</text>
+                <text x="115" y="100" font-size="9" fill="#92400e">High Power • Moderate/Low Interest</text>
+
+                <text x="435" y="85" font-size="11" font-weight="700" fill="#047857" letter-spacing="0.5">QUADRANT I: MANAGE CLOSELY</text>
+                <text x="435" y="100" font-size="9" fill="#065f46">Key Approvers &amp; Decision Authorities</text>
+
+                <text x="115" y="405" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">QUADRANT IV: MONITOR</text>
+                <text x="115" y="420" font-size="9" fill="#475569">Commercial Supply Chain Vendors</text>
+
+                <text x="435" y="405" font-size="11" font-weight="700" fill="#1d4ed8" letter-spacing="0.5">QUADRANT III: KEEP INFORMED</text>
+                <text x="435" y="420" font-size="9" fill="#1e40af">Frontline Champions &amp; Clinical Allies</text>
+
+                <!-- Gridlines -->
+                <line x1="260" y1="60" x2="260" y2="700" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+                <line x1="580" y1="60" x2="580" y2="700" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+                <line x1="100" y1="220" x2="740" y2="220" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+                <line x1="100" y1="540" x2="740" y2="540" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+
+                <!-- 50% Threshold Crosshairs -->
+                <line x1="420" y1="60" x2="420" y2="700" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" />
+                <line x1="100" y1="380" x2="740" y2="380" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" />
+
+                <!-- Axes -->
+                <line x1="100" y1="710" x2="100" y2="40" stroke="#0f172a" stroke-width="2.5" marker-end="url(#arrowHead)" />
+                <line x1="90" y1="700" x2="760" y2="700" stroke="#0f172a" stroke-width="2.5" marker-end="url(#arrowHead)" />
+
+                <!-- Axis Labels & Ticks -->
+                <g font-size="10" font-family="monospace" fill="#475569" text-anchor="end">
+                  <line x1="94" y1="60" x2="100" y2="60" stroke="#0f172a" stroke-width="2" />
+                  <text x="88" y="64">100%</text>
+                  <line x1="94" y1="220" x2="100" y2="220" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="88" y="224">75%</text>
+                  <line x1="92" y1="380" x2="100" y2="380" stroke="#0f172a" stroke-width="2" />
+                  <text x="88" y="384" font-weight="bold" fill="#0f172a">50%</text>
+                  <line x1="94" y1="540" x2="100" y2="540" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="88" y="544">25%</text>
+                  <line x1="94" y1="700" x2="100" y2="700" stroke="#0f172a" stroke-width="2" />
+                  <text x="88" y="704">0%</text>
+                </g>
+
+                <g font-size="10" font-family="monospace" fill="#475569" text-anchor="middle">
+                  <line x1="100" y1="700" x2="100" y2="706" stroke="#0f172a" stroke-width="2" />
+                  <text x="100" y="722">0%</text>
+                  <line x1="260" y1="700" x2="260" y2="706" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="260" y="722">25%</text>
+                  <line x1="420" y1="700" x2="420" y2="708" stroke="#0f172a" stroke-width="2" />
+                  <text x="420" y="722" font-weight="bold" fill="#0f172a">50%</text>
+                  <line x1="580" y1="700" x2="580" y2="706" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="580" y="722">75%</text>
+                  <line x1="740" y1="700" x2="740" y2="706" stroke="#0f172a" stroke-width="2" />
+                  <text x="740" y="722">100%</text>
+                </g>
+
+                <g transform="translate(30, 380) rotate(-90)">
+                  <text text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a" letter-spacing="1">
+                    ▲ STATUTORY POWER &amp; DECISION AUTHORITY (Y-AXIS)
+                  </text>
+                  <text y="14" text-anchor="middle" font-size="9" fill="#64748b">
+                    (Veto, Contracting, Rulemaking, Resource Allocation)
+                  </text>
+                </g>
+
+                <g transform="translate(420, 765)">
+                  <text text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a" letter-spacing="1">
+                    OPERATIONAL INTEREST &amp; ALIGNMENT (X-AXIS) ►
+                  </text>
+                  <text y="14" text-anchor="middle" font-size="9" fill="#64748b">
+                    (Traceability Priority, Patient Safety, Regulatory Mandate Commitment)
+                  </text>
+                </g>
+
+                <!-- Dynamic Projections -->
+                <g id="dropLineGroup" class="pointer-events-none">
+                  <line id="dropLineX" x1="0" y1="0" x2="0" y2="0" stroke="#059669" stroke-width="1.5" stroke-dasharray="3,3" opacity="0" />
+                  <line id="dropLineY" x1="0" y1="0" x2="0" y2="0" stroke="#059669" stroke-width="1.5" stroke-dasharray="3,3" opacity="0" />
+                  <circle id="targetHalo" cx="0" cy="0" r="16" fill="none" stroke="#059669" stroke-width="2" opacity="0" />
+                </g>
+
+                <!-- Stakeholder Nodes Layer -->
+                <g id="stakeholderNodesLayer"></g>
+              </svg>
+
+              <!-- Hover Tooltip -->
+              <div id="chartHoverTooltip" class="absolute pointer-events-none bg-slate-900/95 text-white p-2.5 rounded-xl shadow-xl border border-slate-700 text-xs hidden z-30 max-w-[260px]"></div>
+            </div>
+          </div>
+
+          <!-- SUBVIEW 2: VERTICAL HIERARCHY TREE -->
+          <div id="subviewHierarchyContainer" class="w-full hidden space-y-4 py-2">
+            <div id="hierarchyTreeContent" class="space-y-3.5"></div>
+          </div>
+
+          <!-- Legend -->
+          <div class="mt-4 grid grid-cols-2 sm:grid-cols-4 gap-2 w-full text-center">
+            <div class="p-2 rounded-lg bg-emerald-50 border border-emerald-200">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-emerald-600 mr-1"></span>
+              <span class="text-[11px] font-bold text-emerald-900">Q1: Key Approvers (4)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-amber-50 border border-amber-200">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-amber-500 mr-1"></span>
+              <span class="text-[11px] font-bold text-amber-900">Q2: Keep Satisfied (3)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-blue-50 border border-blue-200">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-blue-600 mr-1"></span>
+              <span class="text-[11px] font-bold text-blue-900">Q3: Clinical Allies (4)</span>
+            </div>
+            <div class="p-2 rounded-lg bg-slate-100 border border-slate-200">
+              <span class="inline-block w-2.5 h-2.5 rounded-full bg-slate-500 mr-1"></span>
+              <span class="text-[11px] font-bold text-slate-800">Q4: Supply Chain (1)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Inspector Card & Roster -->
+        <div class="lg:col-span-5 space-y-4">
+          <div id="inspectorCard" class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs transition-all">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3 mb-3">
+              <div id="inspectorQuadrantBadge" class="text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800">
+                Tier 1: Apex Rulemaking Authority
+              </div>
+              <span id="inspectorCoordBadge" class="font-mono text-xs font-semibold text-slate-500">X: 82% | Y: 98%</span>
+            </div>
+
+            <div>
+              <div class="text-[11px] uppercase font-bold text-slate-400 tracking-wider">Stakeholder Department</div>
+              <h3 id="inspectorDepartment" class="text-lg font-extrabold text-slate-900 leading-tight">NYC Board of Health</h3>
+              
+              <!-- Current Representative Displayed Right Below -->
+              <div class="mt-2 mb-1 p-2.5 rounded-xl bg-emerald-50 border border-emerald-200">
+                <span class="text-[10px] uppercase font-extrabold text-emerald-800 tracking-wider block">Current Representative:</span>
+                <span id="inspectorRepresentative" class="text-xs font-bold text-emerald-950">Dr. Alister Martin (Chair) &amp; Board Members</span>
+              </div>
+              <div id="inspectorRole" class="text-xs font-semibold text-slate-700 mt-1">Statutory Legislative Regulatory Board</div>
+              <div id="inspectorAgency" class="text-xs text-slate-500">New York City Department of Health</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-2.5 my-3.5 p-3 bg-slate-50 rounded-xl border border-slate-200 text-xs">
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Statutory Power</span>
+                <span id="inspectorPowerVal" class="font-bold text-slate-900">98%</span>
+                <div class="w-full bg-slate-200 h-1.5 rounded-full mt-1 overflow-hidden">
+                  <div id="inspectorPowerBar" class="bg-emerald-600 h-full rounded-full" style="width: 98%"></div>
+                </div>
+              </div>
+              <div>
+                <span class="text-[10px] uppercase font-bold text-slate-400 block">Operational Interest</span>
+                <span id="inspectorInterestVal" class="font-bold text-slate-900">82%</span>
+                <div class="w-full bg-slate-200 h-1.5 rounded-full mt-1 overflow-hidden">
+                  <div id="inspectorInterestBar" class="bg-blue-600 h-full rounded-full" style="width: 82%"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="space-y-2.5 text-xs">
+              <div>
+                <h4 class="font-bold text-slate-800 uppercase text-[10px] tracking-wider">Specific Authority / Role</h4>
+                <p id="inspectorAuthority" class="text-slate-600 mt-0.5 leading-relaxed bg-slate-50 p-2.5 rounded-lg border border-slate-100">
+                  Holds exclusive legal power to amend NYC Health Code Article 81 (§81.04).
+                </p>
+              </div>
+              <div>
+                <h4 class="font-bold text-rose-800 uppercase text-[10px] tracking-wider">Operational Risk / Friction Point</h4>
+                <p id="inspectorRisk" class="text-rose-900 mt-0.5 leading-relaxed bg-rose-50/50 p-2.5 rounded-lg border border-rose-100">
+                  Notice-and-comment regulatory requirements.
+                </p>
+              </div>
+              <div>
+                <h4 class="font-bold text-emerald-800 uppercase text-[10px] tracking-wider">Strategic Directive</h4>
+                <p id="inspectorDirective" class="text-emerald-950 mt-0.5 leading-relaxed bg-emerald-50/60 p-2.5 rounded-lg border border-emerald-200 font-medium">
+                  Submit formal petition for rulemaking to amend §81.04.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="bg-white border border-slate-200 rounded-2xl p-4 shadow-xs">
+            <div class="flex items-center justify-between mb-2 pb-2 border-b border-slate-100">
+              <h3 class="text-xs font-bold text-slate-900 uppercase tracking-wide">All Stakeholders Directory</h3>
+              <span id="rosterCountBadge" class="text-[11px] text-slate-500 font-medium">12 stakeholders</span>
+            </div>
+            <div id="quickRosterList" class="space-y-1.5 max-h-60 overflow-y-auto pr-1"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 2: NURSING ESCALATION PATHWAY -->
+    <div id="tab-escalation" class="hidden space-y-5">
+      <div class="bg-white border border-slate-200 rounded-2xl p-6 shadow-xs">
+        <div class="max-w-3xl">
+          <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-blue-100 text-blue-800 text-xs font-bold mb-2">
+            Governance Hierarchy Protocol
+          </span>
+          <h2 class="text-lg sm:text-xl font-bold text-slate-900">Hospital Escalation Pathway for Nurse Leaders</h2>
+          <p class="text-xs sm:text-sm text-slate-600 mt-1 leading-relaxed">
+            Frontline nursing champions operate under strict institutional governance: internal clinical escalation must precede any municipal or legislative interaction.
+          </p>
+        </div>
+
+        <div class="mt-6 space-y-3.5">
+          <div class="flex items-start gap-3.5 p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">1</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-bold text-slate-900">Bedside &amp; Unit Nurse Champions</h4>
+                <span class="text-[10px] bg-blue-100 text-blue-800 font-bold px-2 py-0.5 rounded">Trigger Point</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                Identify inpatient gastrointestinal clusters in immunocompromised wards (Oncology, Renal, Geriatrics). Verify that current Health Code §81.04 lacks lot-code retention on raw salad greens.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <div class="w-8 h-8 rounded-full bg-blue-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">2</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-bold text-slate-900">Clinical Shared Governance &amp; Facility Committee</h4>
+                <span class="text-[10px] bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded">Facility Level</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                Convene joint session with <strong>Food and Nutrition Services (FNS)</strong>, <strong>Infection Prevention</strong>, and <strong>Health Informatics</strong> to execute a baseline mock recall drill.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <div class="w-8 h-8 rounded-full bg-amber-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">3</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-bold text-slate-900">Executive Briefing to CNO &amp; CMO</h4>
+                <span class="text-[10px] bg-amber-100 text-amber-800 font-bold px-2 py-0.5 rounded">Hospital Leadership</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                Present findings to the <strong>Chief Nursing Officer</strong> and <strong>Chief Medical Officer</strong>, establishing that deferred federal rules leave vulnerable patients exposed to uncontained Cyclospora outbreaks.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-4 rounded-xl border border-slate-200 bg-slate-50">
+            <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">4</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-bold text-slate-900">Facility CEO &amp; NYC H+H Central Office Elevation</h4>
+                <span class="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">System Leadership</span>
+              </div>
+              <p class="text-xs text-slate-600 mt-1">
+                Facility CEO transmits proposal to <strong>Dr. Mitchell Katz (President/CEO, NYC H+H)</strong> and <strong>Danielle DiBari (Chief Procurement Officer)</strong> to pilot mandatory electronic KDE capture in 2027 contracts.
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-3.5 p-4 rounded-xl border border-emerald-300 bg-emerald-50/40">
+            <div class="w-8 h-8 rounded-full bg-emerald-700 text-white font-bold flex items-center justify-center text-xs flex-shrink-0">5</div>
+            <div>
+              <div class="flex items-center gap-2">
+                <h4 class="text-sm font-bold text-slate-900">DOHMH &amp; Citywide Rulemaking</h4>
+                <span class="text-[10px] bg-emerald-200 text-emerald-900 font-bold px-2 py-0.5 rounded">Municipal Enactment</span>
+              </div>
+              <p class="text-xs text-slate-700 mt-1">
+                H+H leadership coordinates with <strong>Dr. Alister Martin (DOHMH Commissioner)</strong> and the <strong>NYC Board of Health</strong> to codify Article 81 amendments backed by City Council oversight.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <div class="mt-5 p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-900 flex items-start gap-2.5">
+          <svg class="w-4 h-4 text-rose-600 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+          <div>
+            <strong>Strict Boundary Notice:</strong> Hospital bylaws dictate that bedside nurses must never lobby the City Council or FDA directly without formal coordination via NYC Health + Hospitals Government Affairs.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- TAB 3: POLICY COMPARISON & MOCK DRILL -->
+    <div id="tab-policy" class="hidden space-y-5">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase bg-slate-100 text-slate-600 px-2 py-0.5 rounded">Current Law</span>
+            <span class="text-xs font-bold text-rose-600">Vulnerable</span>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900">NYC Health Code §81.04</h3>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            Requires purchasing solely from "approved sources," but mandates no farm-level or lot-code retention for raw leafy greens.
+          </p>
+        </div>
+
+        <div class="bg-white border border-slate-200 rounded-xl p-4 shadow-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase bg-amber-100 text-amber-800 px-2 py-0.5 rounded">Federal Rule</span>
+            <span class="text-xs font-bold text-amber-600">Delayed</span>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900">FDA FSMA Section 204</h3>
+          <p class="text-xs text-slate-600 mt-1.5 leading-relaxed">
+            Establishes Food Traceability List (FTL) with mandatory Critical Tracking Events (CTEs) and Key Data Elements (KDEs).
+          </p>
+        </div>
+
+        <div class="bg-emerald-50/60 border-2 border-emerald-300 rounded-xl p-4 shadow-xs">
+          <div class="flex items-center justify-between mb-2">
+            <span class="text-[10px] font-bold uppercase bg-emerald-600 text-white px-2 py-0.5 rounded">Proposed Policy</span>
+            <span class="text-xs font-bold text-emerald-800">Target Q1 2027</span>
+          </div>
+          <h3 class="text-sm font-bold text-slate-900">Article 81 NYC Amendment</h3>
+          <p class="text-xs text-slate-700 mt-1.5 leading-relaxed">
+            NYC institutional kitchens must maintain electronic lot-tracking for high-risk produce starting January 2027.
+          </p>
+        </div>
+      </div>
+
+      <div class="bg-white border border-slate-200 rounded-2xl p-5 shadow-xs">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-3 mb-4">
+          <div>
+            <h3 class="text-sm sm:text-base font-bold text-slate-900">Simulated 24-Hour Mock Produce Traceback Drill</h3>
+            <p class="text-xs text-slate-500">Test hospital trace capabilities under simulated Cyclospora iceberg lettuce contamination</p>
+          </div>
+          <button onclick="startSimulationDrill()" class="px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold transition flex items-center gap-1.5 self-start sm:self-auto">
+            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.87v4.263a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z"/></svg>
+            Execute Simulated Drill
+          </button>
+        </div>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-slate-400 font-semibold block text-[10px] uppercase">Traceback Time</span>
+            <span id="drillSpeed" class="text-base font-bold text-slate-800 mt-0.5 block">-- hrs</span>
+            <span class="text-[10px] text-slate-400">Target: &lt; 24h</span>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-slate-400 font-semibold block text-[10px] uppercase">Lot Completeness</span>
+            <span id="drillLot" class="text-base font-bold text-slate-800 mt-0.5 block">-- %</span>
+            <span class="text-[10px] text-slate-400">Target: 100% KDE</span>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-slate-400 font-semibold block text-[10px] uppercase">Wards Identified</span>
+            <span id="drillWards" class="text-base font-bold text-slate-800 mt-0.5 block">Idle</span>
+            <span class="text-[10px] text-slate-400">Oncology, ICU</span>
+          </div>
+          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200">
+            <span class="text-slate-400 font-semibold block text-[10px] uppercase">Standard Outcome</span>
+            <span id="drillStatus" class="text-base font-bold text-slate-800 mt-0.5 block">Pending</span>
+            <span class="text-[10px] text-slate-400">FSMA 204 Test</span>
+          </div>
+        </div>
+
+        <div id="drillTerminalLog" class="mt-3.5 p-3 bg-slate-950 text-slate-200 rounded-xl font-mono text-[11px] hidden leading-relaxed space-y-0.5"></div>
+      </div>
+    </div>
+  </main>
+
+  <footer class="bg-white border-t border-slate-200 py-3 mt-auto">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-1 text-[11px] text-slate-500">
+      <span>NYC Policy Initiative: Local FSMA 204 Produce Traceability &amp; Article 81 Amendment</span>
+      <span>Target Timeline: Q1 2027 • Health Code §81.04</span>
+    </div>
+  </footer>
+
+  <!-- Share & Export Modal -->
+  <div id="shareModal" class="fixed inset-0 bg-slate-900/60 backdrop-blur-xs z-50 flex items-center justify-center p-4 hidden">
+    <div class="bg-white rounded-2xl shadow-2xl max-w-lg w-full p-6 border border-slate-200 space-y-4">
+      <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+        <div class="flex items-center gap-2">
+          <div class="p-2 rounded-lg bg-emerald-100 text-emerald-800">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>
+          </div>
+          <div>
+            <h3 class="text-base font-bold text-slate-900">Share Policy Power Map</h3>
+            <p class="text-xs text-slate-500">Export file or copy summary for your policy team</p>
+          </div>
+        </div>
+        <button onclick="toggleShareModal(false)" class="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg hover:bg-slate-100 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="space-y-3">
+        <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/80 transition flex items-center justify-between gap-3">
+          <div>
+            <h4 class="text-xs font-bold text-slate-900">Download Standalone HTML File</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">Self-contained file that runs offline on any computer or phone.</p>
+          </div>
+          <button onclick="downloadHtmlFile()" class="px-3 py-1.5 rounded-lg bg-slate-900 text-white text-xs font-semibold hover:bg-slate-800 flex-shrink-0">
+            Download
+          </button>
+        </div>
+
+        <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/80 transition flex items-center justify-between gap-3">
+          <div>
+            <h4 class="text-xs font-bold text-slate-900">Save as PDF</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">Print or save formatted report for group notes.</p>
+          </div>
+          <button onclick="window.print()" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 text-xs font-semibold hover:bg-slate-300 flex-shrink-0">
+            Save PDF
+          </button>
+        </div>
+
+        <div class="p-3.5 rounded-xl border border-slate-200 bg-slate-50 hover:bg-slate-100/80 transition flex items-center justify-between gap-3">
+          <div>
+            <h4 class="text-xs font-bold text-slate-900">Copy Text Summary</h4>
+            <p class="text-[11px] text-slate-500 mt-0.5">Copy Markdown text of all stakeholders and tiers.</p>
+          </div>
+          <button onclick="copyExecutiveSummary()" class="px-3 py-1.5 rounded-lg bg-slate-200 text-slate-800 text-xs font-semibold hover:bg-slate-300 flex-shrink-0">
+            Copy Text
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function toggleShareModal(show) {
+      const modal = document.getElementById('shareModal');
+      if (!modal) return;
+      if (show) modal.classList.remove('hidden');
+      else modal.classList.add('hidden');
+    }
+
+    function toggleMapSubView(view) {
+      const graphContainer = document.getElementById('subviewGraphContainer');
+      const hierarchyContainer = document.getElementById('subviewHierarchyContainer');
+      const btnGraph = document.getElementById('subview-btn-graph');
+      const btnHierarchy = document.getElementById('subview-btn-hierarchy');
+
+      if (view === 'graph') {
+        graphContainer.classList.remove('hidden');
+        hierarchyContainer.classList.add('hidden');
+        btnGraph.className = "px-2.5 py-1 rounded-md bg-emerald-600 text-white font-semibold transition";
+        btnHierarchy.className = "px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
+      } else {
+        graphContainer.classList.add('hidden');
+        hierarchyContainer.classList.remove('hidden');
+        btnHierarchy.className = "px-2.5 py-1 rounded-md bg-emerald-600 text-white font-semibold transition";
+        btnGraph.className = "px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
+      }
+    }
+
+    function downloadHtmlFile() {
+      const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+      const blob = new Blob([htmlContent], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'NYC_Produce_Traceability_Power_Map.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    function copyExecutiveSummary() {
+      const text = `NYC Produce Traceability Stakeholder Power Map & Governance Hierarchy\n\n` +
+        `• Tier 1: Apex Authority\n  - Department: NYC Board of Health\n  - Current Representative: Dr. Alister Martin (Chair) & Board Members\n\n` +
+        `• Tier 2: Public Health Administration & Legislative Health Oversight (Parallel)\n  - Department: NYC Dept of Health & Mental Hygiene (DOHMH) | Rep: Dr. Alister Martin\n  - Department: NYC Council Committee on Health | Rep: CM Lynn Schulman, Chair\n\n` +
+        `• Tier 3: Hospital Systems & Legislative Council (Parallel)\n  - Department: NYC Council Committee on Hospitals | Rep: CM Mercedes Narcisse, Chair\n  - Department: NYC Health + Hospitals | Rep: Dr. Mitchell Katz (CEO) & Danielle DiBari (CPO)\n  - Department: Private Hospitals & GNYHA | Rep: Kenneth E. Raske (Pres., GNYHA)\n\n` +
+        `• Tier 4: Facility Executive Leadership\n  - Department: Hospital CEO & Executive Administration | Rep: Facility CEO & Cabinet\n\n` +
+        `• Tier 5: Clinical Interdisciplinary Champions (Parallel)\n  - Department: Inpatient Oncology Units | Rep: Unit Nurse Champions & Shared Governance Chairs\n  - Department: Food & Nutrition Services (FNS) | Rep: Director of Clinical Nutrition & FNS Leadership\n  - Department: Infection Prevention & Control | Rep: Hospital Epidemiologists & ICP Specialists\n  - Department: Quality Improvement (QI) | Rep: Director of QA & Patient Safety Officer\n\n` +
+        `• Tier 6: Food Supply Chain Foundation\n  - Department: Commercial Produce Distribution | Rep: Broadline Food Distributors & Shippers`;
+
+      const tempInput = document.createElement('textarea');
+      tempInput.value = text;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand('copy');
+      document.body.removeChild(tempInput);
+      alertBox('Summary copied to clipboard!');
+    }
+
+    function alertBox(msg) {
+      const banner = document.createElement('div');
+      banner.className = 'fixed bottom-4 right-4 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl z-50 transition-opacity duration-300';
+      banner.innerText = msg;
+      document.body.appendChild(banner);
+      setTimeout(() => {
+        banner.style.opacity = '0';
+        setTimeout(() => banner.remove(), 300);
+      }, 2500);
+    }
+
+    const stakeholders = [
+      // TIER 1: APEX (At top)
+      {
+        id: "board_of_health",
+        department: "NYC Board of Health",
+        representative: "Dr. Alister Martin (Chair) & Board Members",
+        tier: "TIER1_2",
+        tierLabel: "Tier 1: Apex Rulemaking Authority",
+        name: "NYC Board of Health",
+        title: "Statutory Legislative Regulatory Board",
+        agency: "New York City Department of Health",
+        quadrant: 1,
+        powerScore: 98,
+        interestScore: 82,
+        offset: { dx: 14, dy: -6 },
+        authority: "Positioned at the apex of municipal food safety governance. Holds exclusive statutory authority to amend NYC Health Code Article 81 (§81.04) to require hospital kitchens to maintain electronic lot-tracking for leafy greens.",
+        risk: "Requires formal notice-and-comment regulatory cycle and defensible clinical evidentiary justification to outpace federal 2028 enforcement timeline.",
+        directive: "Submit a formal petition for rulemaking to amend §81.04, supported by DOHMH Cyclospora surveillance data and nurse-led clinical risk profiles."
+      },
+
+      // TIER 2: UNDER TIER 1, PARALLEL
+      {
+        id: "dohmh",
+        department: "NYC Dept of Health & Mental Hygiene (DOHMH)",
+        representative: "Dr. Alister Martin, Health Commissioner",
+        tier: "TIER1_2",
+        tierLabel: "Tier 2: Public Health Administration",
+        name: "NYC Dept of Health & Mental Hygiene (DOHMH)",
+        title: "Health Commissioner & Executive Staff",
+        agency: "Executive Public Health Agency",
+        quadrant: 1,
+        powerScore: 90,
+        interestScore: 86,
+        offset: { dx: 14, dy: -6 },
+        authority: "Regulatory enforcement arm under the Board of Health. Can develop the official policy proposal, mobilize surveillance data on Cyclospora clusters, oversee hospital inspections, and formally recommend Article 81 amendments.",
+        risk: "Administrative burden; balancing produce traceback enforcement with citywide restaurant inspection workloads.",
+        directive: "Deliver turnkey draft of proposed §81.04 produce traceability amendment accompanied by local clinical outbreak burden data."
+      },
+      {
+        id: "council_health",
+        department: "NYC Council Committee on Health",
+        representative: "Council Member Lynn Schulman, Chair",
+        tier: "TIER1_2",
+        tierLabel: "Tier 2: Legislative Oversight (Parallel)",
+        name: "NYC Council Committee on Health",
+        title: "Chair, Committee on Health",
+        agency: "New York City Council",
+        quadrant: 2,
+        powerScore: 86,
+        interestScore: 48,
+        offset: { dx: 14, dy: -6 },
+        authority: "Parallel to DOHMH at the municipal oversight level. Holds legislative authority over city public health codes, conducts oversight hearings, requests DOHMH surveillance data, and introduces municipal bills or funding appropriations.",
+        risk: "Committee agenda competition with general hospital budget and emergency department staffing priorities.",
+        directive: "Request a public oversight hearing on hospital foodborne illness risks and invite oncology nurse leaders to testify."
+      },
+
+      // TIER 3: UNDER TIER 2, PARALLEL
+      {
+        id: "council_hospitals",
+        department: "NYC Council Committee on Hospitals",
+        representative: "Council Member Mercedes Narcisse, Chair",
+        tier: "TIER3_4",
+        tierLabel: "Tier 3: Legislative Hospital Oversight (Parallel)",
+        name: "NYC Council Committee on Hospitals",
+        title: "Chair, Committee on Hospitals",
+        agency: "New York City Council",
+        quadrant: 2,
+        powerScore: 78,
+        interestScore: 46,
+        offset: { dx: 14, dy: -6 },
+        authority: "Conducts legislative oversight of both public and private hospital facilities across the five boroughs; can convene hospital executives, nurse leaders, and food safety experts.",
+        risk: "Focus often gravitates toward general nurse-to-patient staffing ratios rather than food chain logistics.",
+        directive: "Connect contaminated produce to inpatient clinical outcomes among vulnerable oncology and geriatric cohorts."
+      },
+      {
+        id: "nyc_hh",
+        department: "NYC Health + Hospitals (Central Office)",
+        representative: "Dr. Mitchell Katz (CEO) & Danielle DiBari (CPO)",
+        tier: "TIER3_4",
+        tierLabel: "Tier 3: Public Hospital System (Parallel)",
+        name: "NYC Health + Hospitals",
+        title: "President/CEO & Chief Procurement Officer",
+        agency: "Public Health Care System (Central Office)",
+        quadrant: 1,
+        powerScore: 82,
+        interestScore: 90,
+        offset: { dx: -200, dy: -6 },
+        authority: "Governs the nation's largest municipal hospital system (11 acute hospitals). Can unilaterally authorize an institutional pilot across public hospitals, mandating electronic lot-tracking clauses into produce purchasing contracts ahead of 2028.",
+        risk: "Municipal health system financial constraints and dietary union operating workflows.",
+        directive: "Incorporate standardized Critical Tracking Event (CTE) specifications into upcoming 2027 broadline produce purchasing contracts."
+      },
+      {
+        id: "private_gnyha",
+        department: "Private Hospitals & GNYHA",
+        representative: "Kenneth E. Raske (Pres., GNYHA) & Hospital CEOs",
+        tier: "TIER3_4",
+        tierLabel: "Tier 3: Voluntary Hospital Consortium (Parallel)",
+        name: "Private Hospitals & GNYHA",
+        title: "Hospital Executives & Greater NY Hospital Association",
+        agency: "Voluntary & Non-Profit Healthcare Sector",
+        quadrant: 2,
+        powerScore: 74,
+        interestScore: 38,
+        offset: { dx: 14, dy: -6 },
+        authority: "Essential counterpart to NYC H+H; represents major voluntary medical centers (Mount Sinai, NYP, NYU Langone, Northwell). Their alignment is vital if the policy is codified across private facilities.",
+        risk: "May resist unfunded administrative mandates or complex software logging requirements.",
+        directive: "Share NYC H+H pilot feasibility data early to demonstrate that electronic distributor records minimize administrative overhead."
+      },
+
+      // TIER 4: UNDER TIER 3 (Hospital CEO / Administration)
+      {
+        id: "hospital_ceo",
+        department: "Hospital Facility Administration",
+        representative: "Facility Chief Executive Officer & Executive Cabinet",
+        tier: "TIER3_4",
+        tierLabel: "Tier 4: Facility Executive Leadership",
+        name: "Hospital CEO & Administration",
+        title: "Facility Chief Executive Officer & COO",
+        agency: "Individual Hospital Facility Administration",
+        quadrant: 1,
+        powerScore: 58,
+        interestScore: 72,
+        offset: { dx: 14, dy: -6 },
+        authority: "Holds direct operational budget and managerial authority for the hospital facility. Approves dock-receiving scanning equipment, signs off on CNO/CMO policy elevation, and transmits policy requests to Central Office.",
+        risk: "Wary of operational bottlenecks or increased patient meal tray preparation costs.",
+        directive: "Position rapid produce traceability as clinical risk insulation against Joint Commission penalties and hospital-acquired illness litigation."
+      },
+
+      // TIER 5: UNDER TIER 4 (Interdisciplinary Clinical Disciplines)
+      {
+        id: "oncology_nursing",
+        department: "Inpatient Oncology & Transplant Units",
+        representative: "Unit Nurse Champions & Bedside Shared Governance Chairs",
+        tier: "TIER5",
+        tierLabel: "Tier 5: Clinical Bedside Advocates",
+        name: "Oncology Nurses & Clinicians",
+        title: "Inpatient Bedside Oncology & Transplant Champions",
+        agency: "Inpatient Oncology & Transplant Divisions",
+        quadrant: 3,
+        powerScore: 36,
+        interestScore: 98,
+        offset: { dx: -200, dy: -18 },
+        authority: "First to identify symptoms of severe foodborne illness in vulnerable immunocompromised patients. Initiates internal clinical shared governance escalation and provides the clinical rationale for requiring verified produce traceability.",
+        risk: "Must follow internal escalation hierarchy; cannot lobby external municipal bodies directly without CNO authorization.",
+        directive: "Document clinical risk profiles and utilize clinical shared governance councils to elevate produce safety to the Chief Nursing Officer."
+      },
+      {
+        id: "dietitians_fns",
+        department: "Food & Nutrition Services (FNS)",
+        representative: "Director of Clinical Nutrition & FNS Culinary Leadership",
+        tier: "TIER5",
+        tierLabel: "Tier 5: Dietary Operations",
+        name: "Registered Dietitians & Food/Nutrition Services",
+        title: "Clinical Nutritionists & FNS Directors",
+        agency: "Hospital Food & Nutrition Services Department",
+        quadrant: 3,
+        powerScore: 32,
+        interestScore: 94,
+        offset: { dx: 14, dy: 14 },
+        authority: "Manages hospital dietary receiving, meal assembly, and patient tray distribution. Inspects produce cartons at receiving docks, tracks meal service logs to specific inpatient beds, and executes produce holds during recalls.",
+        risk: "Staffing limitations in commercial kitchens and lack of digital barcode scanners at receiving docks.",
+        directive: "Partner with nursing champions to run baseline 24-hour mock trace drills on iceberg lettuce inventory."
+      },
+      {
+        id: "infection_prevention",
+        department: "Infection Prevention & Control",
+        representative: "Hospital Epidemiologists & ICP Quality Specialists",
+        tier: "TIER5",
+        tierLabel: "Tier 5: Hospital Epidemiology",
+        name: "Infection Prevention & Control",
+        title: "Hospital Epidemiologists & ICP Specialists",
+        agency: "Division of Quality & Infection Prevention",
+        quadrant: 3,
+        powerScore: 34,
+        interestScore: 95,
+        offset: { dx: 14, dy: -18 },
+        authority: "Monitors hospital-wide gastrointestinal disease clusters, coordinates diagnostic testing (GI PCR panels for Cyclospora cayetanensis), and serves as the mandatory liaison reporting outbreaks to DOHMH.",
+        risk: "Cyclospora incubation periods (1–2 weeks) can delay clinical suspicion until after produce has been consumed.",
+        directive: "Establish automated electronic health record (EHR) alerts for unexplained inpatient diarrhea among oncology patients."
+      },
+      {
+        id: "quality_improvement",
+        department: "Quality Improvement & Patient Safety",
+        representative: "Director of Quality Assurance & Patient Safety Officer",
+        tier: "TIER5",
+        tierLabel: "Tier 5: Patient Safety & Audits",
+        name: "Quality Improvement (QI) & Patient Safety",
+        title: "Directors of Quality Assurance & Patient Safety Officers",
+        agency: "Hospital Quality & Regulatory Affairs",
+        quadrant: 3,
+        powerScore: 30,
+        interestScore: 90,
+        offset: { dx: -200, dy: 14 },
+        authority: "Audits facility compliance with patient safety standards, conducts root cause analyses on adverse events, tracks electronic recall response times, and presents risk mitigation data to the hospital CEO.",
+        risk: "Competing clinical quality metrics and reporting mandates (sepsis bundles, CAUTI, CLABSI).",
+        directive: "Incorporate rapid produce mock recalls into annual hospital disaster preparedness and safety performance scorecards."
+      },
+
+      // TIER 6: UNDER TIER 5 (Food Supply Chain Foundation)
+      {
+        id: "produce_distributors",
+        department: "Commercial Food Distributors & Farm Shippers",
+        representative: "Contracted Broadline Food Distributors & Regional Farm Shippers",
+        tier: "TIER6",
+        tierLabel: "Tier 6: Food Supply Chain Foundation",
+        name: "Produce Growers & Commercial Distributors",
+        title: "Commercial Food Distributors & Regional Farm Shippers",
+        agency: "Commercial Food Supply Chain",
+        quadrant: 4,
+        powerScore: 16,
+        interestScore: 34,
+        offset: { dx: 14, dy: -6 },
+        authority: "Must physically capture and transmit FDA Key Data Elements (KDEs)—including harvest location, cooler, lot code, and pack date—via electronic manifests down to hospital receiving docks.",
+        risk: "May push back on contract terms or claim lot-tracking software integration imposes cost surcharges.",
+        directive: "Leverage hospital procurement buying power to enforce digital lot compliance in RFP bidding standards without added carton fees."
+      }
+    ];
+
+    let currentSectorFilter = 'ALL';
+    let currentSearchTerm = '';
+    let selectedStakeholderId = 'board_of_health';
+    let isInitialized = false;
+
+    function calcCoordinates(interest, power) {
+      const svgX = 100 + (interest / 100) * 640;
+      const svgY = 700 - (power / 100) * 640;
+      return { x: svgX, y: svgY };
+    }
+
+    function renderSquareChart() {
+      const container = document.getElementById('stakeholderNodesLayer');
+      if (!container) return;
+      container.innerHTML = '';
+
+      let visibleCount = 0;
+
+      stakeholders.forEach(s => {
+        const matchesSector = currentSectorFilter === 'ALL' || s.tier === currentSectorFilter;
+        const query = currentSearchTerm.toLowerCase();
+        const matchesSearch = (s.department && s.department.toLowerCase().includes(query)) ||
+                              (s.representative && s.representative.toLowerCase().includes(query)) ||
+                              (s.name && s.name.toLowerCase().includes(query)) ||
+                              (s.agency && s.agency.toLowerCase().includes(query)) ||
+                              (s.authority && s.authority.toLowerCase().includes(query));
+
+        if (matchesSector && matchesSearch) visibleCount++;
+
+        const isDimmed = !matchesSector || !matchesSearch;
+        const isSelected = s.id === selectedStakeholderId;
+        const coords = calcCoordinates(s.interestScore, s.powerScore);
+
+        let fill = "#64748b";
+        let stroke = "#334155";
+        let repColor = "#047857";
+        if (s.quadrant === 1) { fill = "#10b981"; stroke = "#047857"; repColor = "#065f46"; }
+        else if (s.quadrant === 2) { fill = "#f59e0b"; stroke = "#b45309"; repColor = "#92400e"; }
+        else if (s.quadrant === 3) { fill = "#3b82f6"; stroke = "#1d4ed8"; repColor = "#1e40af"; }
+
+        const g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+        g.setAttribute('class', 'node-element');
+        g.setAttribute('id', `node-${s.id}`);
+        g.style.opacity = isDimmed ? '0.15' : '1';
+
+        let pulseSvg = '';
+        if (s.quadrant === 1 && !isDimmed) {
+          pulseSvg = `<circle cx="${coords.x}" cy="${coords.y}" r="16" fill="none" stroke="${stroke}" stroke-width="1.5" opacity="0.4" class="animate-ping" style="transform-origin: ${coords.x}px ${coords.y}px;" />`;
+        }
+
+        const ringWidth = isSelected ? 4 : 2;
+        const ringStroke = isSelected ? '#0f172a' : stroke;
+
+        const deptText = s.department;
+        const repText = s.representative;
+        const offX = s.offset ? s.offset.dx : 14;
+        const offY = s.offset ? s.offset.dy : -6;
+        const badgeWidth = 195;
+        const badgeHeight = 30;
+
+        g.innerHTML = `
+          ${pulseSvg}
+          <circle cx="${coords.x}" cy="${coords.y}" r="11" fill="${fill}" stroke="${ringStroke}" stroke-width="${ringWidth}" filter="url(#shadowGlow)" class="node-core" />
+          <circle cx="${coords.x}" cy="${coords.y}" r="3.5" fill="#ffffff" />
+          
+          <g transform="translate(${coords.x + offX}, ${coords.y + offY})">
+            <rect x="0" y="-10" width="${badgeWidth}" height="${badgeHeight}" rx="5" fill="#ffffff" fill-opacity="0.97" stroke="${ringStroke}" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.08))" />
+            <text x="6" y="3" font-size="8.5" font-weight="800" fill="#0f172a" font-family="Inter, sans-serif">🏢 ${deptText.length > 25 ? deptText.substring(0, 24) + '...' : deptText}</text>
+            <text x="6" y="15" font-size="7.5" font-weight="600" fill="${repColor}" font-family="Inter, sans-serif">👤 ${repText.length > 27 ? repText.substring(0, 26) + '...' : repText}</text>
+          </g>
+        `;
+
+        g.addEventListener('mouseenter', () => onNodeHover(s, coords));
+        g.addEventListener('mouseleave', onNodeLeave);
+        g.addEventListener('click', () => selectStakeholder(s.id));
+
+        container.appendChild(g);
+      });
+
+      const badge = document.getElementById('rosterCountBadge');
+      if (badge) badge.innerText = `${visibleCount} of ${stakeholders.length} visible`;
+    }
+
+    function renderHierarchyTree() {
+      const container = document.getElementById('hierarchyTreeContent');
+      if (!container) return;
+
+      const tiers = [
+        {
+          id: "T1",
+          label: "TIER 1: APEX STATUTORY AUTHORITY",
+          subtitle: "Sole Legal Jurisdiction to Amend NYC Health Code Article 81 (§81.04)",
+          items: stakeholders.filter(s => s.id === 'board_of_health')
+        },
+        {
+          id: "T2",
+          label: "TIER 2: PUBLIC HEALTH ADMINISTRATION & LEGISLATIVE OVERSIGHT (PARALLEL)",
+          subtitle: "Executive Code Proposal & City Council Health Oversight",
+          items: stakeholders.filter(s => s.id === 'dohmh' || s.id === 'council_health')
+        },
+        {
+          id: "T3",
+          label: "TIER 3: HOSPITAL SYSTEMS & LEGISLATIVE OVERSIGHT (PARALLEL)",
+          subtitle: "Public System Procurement, Legislative Hospital Scrutiny, and Voluntary Consortium",
+          items: stakeholders.filter(s => s.id === 'council_hospitals' || s.id === 'nyc_hh' || s.id === 'private_gnyha')
+        },
+        {
+          id: "T4",
+          label: "TIER 4: HOSPITAL FACILITY EXECUTIVE LEADERSHIP",
+          subtitle: "Approves Local Kitchen Workflows, Dock Scanners, and System Escalation",
+          items: stakeholders.filter(s => s.id === 'hospital_ceo')
+        },
+        {
+          id: "T5",
+          label: "TIER 5: CLINICAL & INTERDISCIPLINARY IMPLEMENTATION TEAMS (PARALLEL)",
+          subtitle: "Frontline Patient Safety, Clinical Diarrhea Detection, Dietary Receiving, and Quality Audits",
+          items: stakeholders.filter(s => s.id === 'oncology_nursing' || s.id === 'dietitians_fns' || s.id === 'infection_prevention' || s.id === 'quality_improvement')
+        },
+        {
+          id: "T6",
+          label: "TIER 6: FOOD SUPPLY CHAIN FOUNDATION",
+          subtitle: "Electronic Key Data Elements (KDEs) and Farm-to-Dock Lot Manifests",
+          items: stakeholders.filter(s => s.id === 'produce_distributors')
+        }
+      ];
+
+      container.innerHTML = tiers.map((tier, idx) => `
+        <div class="border border-slate-200 bg-slate-50/70 rounded-xl p-3.5 space-y-2">
+          <div class="flex items-center justify-between border-b border-slate-200/60 pb-1.5">
+            <div>
+              <span class="text-[10px] uppercase font-bold text-slate-500 tracking-wider">${tier.label}</span>
+              <p class="text-[11px] text-slate-600">${tier.subtitle}</p>
+            </div>
+            <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-white text-slate-600 border border-slate-200">Level ${idx + 1}</span>
+          </div>
+          <div class="grid grid-cols-1 ${tier.items.length > 2 ? 'sm:grid-cols-2 lg:grid-cols-4' : tier.items.length === 2 ? 'sm:grid-cols-2' : 'grid-cols-1'} gap-2.5">
+            ${tier.items.map(s => {
+              const isSelected = s.id === selectedStakeholderId;
+              let badgeColor = s.quadrant === 1 ? 'bg-emerald-100 text-emerald-800 border-emerald-200' :
+                               s.quadrant === 2 ? 'bg-amber-100 text-amber-800 border-amber-200' :
+                               s.quadrant === 3 ? 'bg-blue-100 text-blue-800 border-blue-200' : 'bg-slate-200 text-slate-700 border-slate-300';
+              return `
+                <div onclick="selectStakeholder('${s.id}')" class="cursor-pointer p-3 rounded-xl bg-white border ${isSelected ? 'border-slate-900 ring-2 ring-slate-900/10' : 'border-slate-200 hover:border-slate-300'} transition shadow-xs">
+                  <div class="flex items-center justify-between gap-1 mb-1">
+                    <span class="text-[9px] font-bold px-1.5 py-0.2 rounded uppercase border ${badgeColor}">Q${s.quadrant}</span>
+                    <span class="text-[10px] font-mono text-slate-400">P:${s.powerScore}\% I:${s.interestScore}%</span>
+                  </div>
+                  <h4 class="text-xs font-bold text-slate-900 leading-tight">🏢 ${s.department}</h4>
+                  <div class="mt-1.5 p-1.5 rounded bg-emerald-50/70 border border-emerald-200/80">
+                    <div class="text-[9px] uppercase font-bold text-emerald-800">Current Representative:</div>
+                    <div class="text-[11px] font-semibold text-emerald-950">👤 ${s.representative}</div>
+                  </div>
+                  <p class="text-[10px] text-slate-500 mt-1 line-clamp-1">${s.agency}</p>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function onNodeHover(s, coords) {
+      const lineX = document.getElementById('dropLineX');
+      const lineY = document.getElementById('dropLineY');
+      const targetHalo = document.getElementById('targetHalo');
+      const coordIndicator = document.getElementById('liveCoordIndicator');
+
+      if (lineX && lineY && targetHalo) {
+        lineX.setAttribute('x1', coords.x);
+        lineX.setAttribute('y1', coords.y);
+        lineX.setAttribute('x2', coords.x);
+        lineX.setAttribute('y2', 700);
+        lineX.setAttribute('stroke', s.quadrant === 1 ? '#059669' : s.quadrant === 2 ? '#b45309' : '#2563eb');
+        lineX.setAttribute('opacity', '1');
+
+        lineY.setAttribute('x1', coords.x);
+        lineY.setAttribute('y1', coords.y);
+        lineY.setAttribute('x2', 100);
+        lineY.setAttribute('y2', coords.y);
+        lineY.setAttribute('stroke', s.quadrant === 1 ? '#059669' : s.quadrant === 2 ? '#b45309' : '#2563eb');
+        lineY.setAttribute('opacity', '1');
+
+        targetHalo.setAttribute('cx', coords.x);
+        targetHalo.setAttribute('cy', coords.y);
+        targetHalo.setAttribute('stroke', s.quadrant === 1 ? '#059669' : s.quadrant === 2 ? '#b45309' : '#2563eb');
+        targetHalo.setAttribute('opacity', '1');
+      }
+
+      if (coordIndicator) {
+        coordIndicator.innerText = `${s.department} (${s.representative}): X=${s.interestScore}%, Y=${s.powerScore}%`;
+      }
+
+      const tooltip = document.getElementById('chartHoverTooltip');
+      if (tooltip) {
+        tooltip.innerHTML = `
+          <div class="font-bold text-white text-xs">🏢 ${s.department}</div>
+          <div class="text-[11px] text-emerald-300 font-semibold mt-0.5">👤 ${s.representative}</div>
+          <div class="text-[10px] text-slate-300 mt-1">${s.tierLabel}</div>
+          <div class="text-[10px] text-slate-300">Authority: <strong>${s.powerScore}%</strong> | Interest: <strong>${s.interestScore}%</strong></div>
+        `;
+
+        const svgRect = document.getElementById('squareMapSvg').getBoundingClientRect();
+        const pctX = coords.x / 800;
+        const pctY = coords.y / 800;
+
+        const leftPos = Math.min(Math.max(pctX * svgRect.width - 20, 15), svgRect.width - 240);
+        const topPos = coords.y < 200 ? (pctY * svgRect.height + 20) : (pctY * svgRect.height - 85);
+
+        tooltip.style.left = `${leftPos}px`;
+        tooltip.style.top = `${topPos}px`;
+        tooltip.classList.remove('hidden');
+      }
+    }
+
+    function onNodeLeave() {
+      const lineX = document.getElementById('dropLineX');
+      const lineY = document.getElementById('dropLineY');
+      const targetHalo = document.getElementById('targetHalo');
+      const tooltip = document.getElementById('chartHoverTooltip');
+
+      if (lineX) lineX.setAttribute('opacity', '0');
+      if (lineY) lineY.setAttribute('opacity', '0');
+      if (targetHalo) targetHalo.setAttribute('opacity', '0');
+      if (tooltip) tooltip.classList.add('hidden');
+    }
+
+    function selectStakeholder(id) {
+      selectedStakeholderId = id;
+      const s = stakeholders.find(item => item.id === id);
+      if (!s) return;
+
+      document.getElementById('inspectorDepartment').innerText = s.department;
+      document.getElementById('inspectorRepresentative').innerText = s.representative;
+      document.getElementById('inspectorRole').innerText = s.title;
+      document.getElementById('inspectorAgency').innerText = s.agency;
+      document.getElementById('inspectorAuthority').innerText = s.authority;
+      document.getElementById('inspectorRisk').innerText = s.risk;
+      document.getElementById('inspectorDirective').innerText = s.directive;
+
+      document.getElementById('inspectorCoordBadge').innerText = `X: ${s.interestScore}% | Y: ${s.powerScore}%`;
+      document.getElementById('inspectorPowerVal').innerText = `${s.powerScore}% Authority (${s.tierLabel.split(':')[0]})`;
+      document.getElementById('inspectorInterestVal').innerText = `${s.interestScore}% Traceability Interest`;
+
+      document.getElementById('inspectorPowerBar').style.width = `${s.powerScore}%`;
+      document.getElementById('inspectorInterestBar').style.width = `${s.interestScore}%`;
+
+      const badge = document.getElementById('inspectorQuadrantBadge');
+      badge.innerText = s.tierLabel;
+      if (s.quadrant === 1) {
+        badge.className = "text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 border border-emerald-200";
+      } else if (s.quadrant === 2) {
+        badge.className = "text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-800 border border-amber-200";
+      } else if (s.quadrant === 3) {
+        badge.className = "text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-blue-100 text-blue-800 border border-blue-200";
+      } else {
+        badge.className = "text-[11px] font-extrabold uppercase px-2.5 py-0.5 rounded-full bg-slate-100 text-slate-700 border border-slate-200";
+      }
+
+      renderSquareChart();
+      renderHierarchyTree();
+      renderQuickRoster();
+    }
+
+    function renderQuickRoster() {
+      const rosterList = document.getElementById('quickRosterList');
+      if (!rosterList) return;
+      rosterList.innerHTML = '';
+
+      stakeholders.forEach(s => {
+        const matchesSector = currentSectorFilter === 'ALL' || s.tier === currentSectorFilter;
+        const query = currentSearchTerm.toLowerCase();
+        const matchesSearch = (s.department && s.department.toLowerCase().includes(query)) ||
+                              (s.representative && s.representative.toLowerCase().includes(query)) ||
+                              (s.name && s.name.toLowerCase().includes(query)) ||
+                              (s.agency && s.agency.toLowerCase().includes(query));
+
+        if (!matchesSector || !matchesSearch) return;
+
+        const isSelected = s.id === selectedStakeholderId;
+        const btn = document.createElement('button');
+        btn.className = `w-full text-left p-2.5 rounded-xl text-xs transition flex items-center justify-between gap-2 ${
+          isSelected 
+            ? 'bg-slate-900 text-white font-semibold shadow-xs' 
+            : 'bg-slate-50 hover:bg-slate-100 text-slate-800 border border-slate-200/60'
+        }`;
+        btn.onclick = () => selectStakeholder(s.id);
+
+        let tagColor = "bg-slate-200 text-slate-700";
+        if (s.quadrant === 1) tagColor = "bg-emerald-100 text-emerald-800";
+        if (s.quadrant === 2) tagColor = "bg-amber-100 text-amber-800";
+        if (s.quadrant === 3) tagColor = "bg-blue-100 text-blue-800";
+
+        btn.innerHTML = `
+          <div class="truncate">
+            <div class="truncate font-bold">🏢 ${s.department}</div>
+            <div class="text-[11px] ${isSelected ? 'text-emerald-300' : 'text-emerald-700 font-semibold'} truncate mt-0.5">👤 ${s.representative}</div>
+            <div class="text-[10px] opacity-75 truncate">${s.tierLabel.split(':')[0]} • ${s.agency}</div>
+          </div>
+          <span class="text-[9px] px-1.5 py-0.5 rounded font-bold uppercase flex-shrink-0 ${tagColor}">
+            Q${s.quadrant}
+          </span>
+        `;
+
+        rosterList.appendChild(btn);
+      });
+    }
+
+    function filterBySector(tier) {
+      currentSectorFilter = tier;
+      const tiers = ['ALL', 'TIER1_2', 'TIER3_4', 'TIER5', 'TIER6'];
+      tiers.forEach(t => {
+        const el = document.getElementById(`filter-btn-${t}`);
+        if (el) {
+          if (t === tier) {
+            el.className = "px-2.5 py-1 rounded-md bg-slate-900 text-white font-semibold transition";
+          } else {
+            el.className = "px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
+          }
+        }
+      });
+      renderSquareChart();
+      renderQuickRoster();
+    }
+
+    function onSearchChange() {
+      currentSearchTerm = document.getElementById('stakeholderSearch').value;
+      renderSquareChart();
+      renderQuickRoster();
+    }
+
+    function resetGraphSelection() {
+      currentSectorFilter = 'ALL';
+      currentSearchTerm = '';
+      document.getElementById('stakeholderSearch').value = '';
+      filterBySector('ALL');
+      selectStakeholder('board_of_health');
+    }
+
+    function switchMainTab(tab) {
+      const tabs = ['map', 'escalation', 'policy'];
+      tabs.forEach(t => {
+        const panel = document.getElementById(`tab-${t}`);
+        const btn = document.getElementById(`tab-btn-${t}`);
+        if (t === tab) {
+          panel.classList.remove('hidden');
+          btn.className = "px-3 py-1.5 rounded-md bg-white text-slate-900 shadow-xs font-semibold transition";
+        } else {
+          panel.classList.add('hidden');
+          btn.className = "px-3 py-1.5 rounded-md hover:text-slate-900 transition text-slate-600";
+        }
+      });
+      if (tab === 'map') {
+        renderSquareChart();
+      }
+    }
+
+    function startSimulationDrill() {
+      const log = document.getElementById('drillTerminalLog');
+      log.classList.remove('hidden');
+      log.innerHTML = '<span class="text-emerald-400">[00:00:00] INITIATING 24-HOUR PRODUCE RECALL SIMULATION (CYCLOSPORA IN ICEBERG LETTUCE)...</span>';
+
+      const sequence = [
+        "[00:01:10] DOHMH Alert: Contaminated Iceberg Lettuce lot CYC-904-B detected via clinical cluster.",
+        "[00:04:45] Querying NYC H+H Central EDI & Broadline Distributor electronic shipping manifest...",
+        "[00:08:20] Match confirmed: 72 cases delivered to hospital culinary receiving docks.",
+        "[00:14:50] Cross-checking Registered Dietitians & Food/Nutrition Services (FNS) meal prep logs...",
+        "[00:21:10] Traced to 118 inpatient salad trays served across Inpatient Oncology & Bone Marrow units.",
+        "[00:23:15] Infection Prevention & Bedside Oncology Nurses alerted; remaining lettuce quarantined.",
+        "[00:24:00] DRILL COMPLETE: Traceback accomplished in 0.40 hrs. Full compliance with FSMA 204."
+      ];
+
+      let step = 0;
+      const interval = setInterval(() => {
+        if (step < sequence.length) {
+          log.innerHTML += `<br><span class="text-slate-300">${sequence[step]}</span>`;
+          log.scrollTop = log.scrollHeight;
+          step++;
+        } else {
+          clearInterval(interval);
+          document.getElementById('drillSpeed').innerText = "0.40 Hours";
+          document.getElementById('drillSpeed').className = "text-base font-bold text-emerald-600 mt-0.5 block";
+          document.getElementById('drillLot').innerText = "100%";
+          document.getElementById('drillLot').className = "text-base font-bold text-emerald-600 mt-0.5 block";
+          document.getElementById('drillWards').innerText = "118 Traced";
+          document.getElementById('drillWards').className = "text-base font-bold text-emerald-600 mt-0.5 block";
+          document.getElementById('drillStatus').innerText = "PASSED";
+          document.getElementById('drillStatus').className = "text-base font-bold text-emerald-600 mt-0.5 block";
+        }
+      }, 350);
+    }
+
+    function initializeApp() {
+      if (isInitialized) return;
+      isInitialized = true;
+      renderSquareChart();
+      renderHierarchyTree();
+      renderQuickRoster();
+      selectStakeholder('board_of_health');
+    }
+
+    if (document.readyState === 'complete' || document.readyState === 'interactive') {
+      setTimeout(initializeApp, 1);
+    } else {
+      document.addEventListener('DOMContentLoaded', initializeApp);
+      window.addEventListener('load', initializeApp);
+    }
+  </script>
+</body>
+</html>
