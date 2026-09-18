@@ -26,8 +26,8 @@
     }
     .square-canvas-container {
       width: 100%;
-      max-width: 720px;
-      aspect-ratio: 1 / 1;
+      max-width: 860px;
+      aspect-ratio: 900 / 765;
       margin: 0 auto;
       position: relative;
     }
@@ -163,6 +163,12 @@
                   Vertical Hierarchy Tree
                 </button>
               </div>
+              <div id="mapZoomControls" class="inline-flex items-center bg-slate-100 p-0.5 rounded-lg text-slate-700 border border-slate-200">
+                <button onclick="zoomMap(-0.1)" title="Zoom Out" class="px-2 py-0.5 text-xs font-bold hover:bg-white hover:text-slate-900 rounded transition">−</button>
+                <span id="zoomLevelDisplay" class="px-1.5 py-0.5 text-[10px] font-mono font-semibold text-slate-600">105%</span>
+                <button onclick="zoomMap(0.1)" title="Zoom In" class="px-2 py-0.5 text-xs font-bold hover:bg-white hover:text-slate-900 rounded transition">+</button>
+                <button onclick="resetZoomMap()" title="Reset Zoom" class="px-1.5 py-0.5 text-[10px] font-medium text-slate-500 hover:bg-white hover:text-slate-900 rounded transition">Reset</button>
+              </div>
               <div class="text-[11px] font-mono text-slate-500 hidden sm:block" id="liveCoordIndicator">Select node to inspect</div>
             </div>
           </div>
@@ -170,7 +176,7 @@
           <!-- SUBVIEW 1: SQUARE COORDINATE GRAPH -->
           <div id="subviewGraphContainer" class="w-full">
             <div class="square-canvas-container bg-slate-50/70 rounded-xl border border-slate-200 relative overflow-hidden select-none">
-              <svg id="squareMapSvg" viewBox="0 0 800 800" class="w-full h-full block">
+              <svg id="squareMapSvg" viewBox="12 22 900 765" class="w-full h-full block">
                 <defs>
                   <marker id="arrowHead" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                     <path d="M 0 1.5 L 8 5 L 0 8.5 z" fill="#0f172a" />
@@ -181,82 +187,89 @@
                 </defs>
 
                 <!-- Quadrant II: Top-Left -->
-                <rect x="100" y="60" width="320" height="320" fill="#fef3c7" fill-opacity="0.35" />
+                <rect x="110" y="80" width="320" height="300" fill="#fef3c7" fill-opacity="0.32" />
                 <!-- Quadrant I: Top-Right -->
-                <rect x="420" y="60" width="320" height="320" fill="#d1fae5" fill-opacity="0.4" />
+                <rect x="430" y="80" width="320" height="300" fill="#d1fae5" fill-opacity="0.38" />
                 <!-- Quadrant IV: Bottom-Left -->
-                <rect x="100" y="380" width="320" height="320" fill="#f1f5f9" fill-opacity="0.5" />
+                <rect x="110" y="380" width="320" height="300" fill="#f1f5f9" fill-opacity="0.5" />
                 <!-- Quadrant III: Bottom-Right -->
-                <rect x="420" y="380" width="320" height="320" fill="#dbeafe" fill-opacity="0.38" />
+                <rect x="430" y="380" width="320" height="300" fill="#dbeafe" fill-opacity="0.35" />
 
-                <!-- Quadrant Watermarks -->
-                <text x="115" y="85" font-size="11" font-weight="700" fill="#b45309" letter-spacing="0.5">QUADRANT II: KEEP SATISFIED</text>
-                <text x="115" y="100" font-size="9" fill="#92400e">High Power • Moderate/Low Interest</text>
+                <!-- Quadrant Corner Headers (Reduced Font Size & Discreet Positioning) -->
+                <g class="pointer-events-none select-none">
+                  <!-- Quadrant II -->
+                  <text x="122" y="98" font-size="8.5" font-weight="700" fill="#b45309" letter-spacing="0.5">QUADRANT II: KEEP SATISFIED</text>
+                  <text x="122" y="110" font-size="7" fill="#92400e">High Power • Moderate/Low Interest</text>
 
-                <text x="435" y="85" font-size="11" font-weight="700" fill="#047857" letter-spacing="0.5">QUADRANT I: MANAGE CLOSELY</text>
-                <text x="435" y="100" font-size="9" fill="#065f46">Key Approvers &amp; Decision Authorities</text>
+                  <!-- Quadrant I -->
+                  <text x="442" y="98" font-size="8.5" font-weight="700" fill="#047857" letter-spacing="0.5">QUADRANT I: MANAGE CLOSELY</text>
+                  <text x="442" y="110" font-size="7" fill="#065f46">Key Decision-Making Authorities</text>
 
-                <text x="115" y="405" font-size="11" font-weight="700" fill="#64748b" letter-spacing="0.5">QUADRANT IV: MONITOR</text>
-                <text x="115" y="420" font-size="9" fill="#475569">Commercial Supply Chain Vendors</text>
+                  <!-- Quadrant IV -->
+                  <text x="122" y="398" font-size="8.5" font-weight="700" fill="#64748b" letter-spacing="0.5">QUADRANT IV: MONITOR</text>
+                  <text x="122" y="410" font-size="7" fill="#475569">Commercial Supply Chain Vendors</text>
 
-                <text x="435" y="405" font-size="11" font-weight="700" fill="#1d4ed8" letter-spacing="0.5">QUADRANT III: KEEP INFORMED</text>
-                <text x="435" y="420" font-size="9" fill="#1e40af">Frontline Champions &amp; Clinical Allies</text>
+                  <!-- Quadrant III -->
+                  <text x="442" y="398" font-size="8.5" font-weight="700" fill="#1d4ed8" letter-spacing="0.5">QUADRANT III: KEEP INFORMED</text>
+                  <text x="442" y="410" font-size="7" fill="#1e40af">Frontline Champions &amp; Clinical Allies</text>
+                </g>
 
                 <!-- Gridlines -->
-                <line x1="260" y1="60" x2="260" y2="700" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
-                <line x1="580" y1="60" x2="580" y2="700" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
-                <line x1="100" y1="220" x2="740" y2="220" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
-                <line x1="100" y1="540" x2="740" y2="540" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+                <line x1="270" y1="80" x2="270" y2="680" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+                <line x1="590" y1="80" x2="590" y2="680" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+                <line x1="110" y1="230" x2="750" y2="230" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
+                <line x1="110" y1="530" x2="750" y2="530" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="2,3" opacity="0.6" />
 
                 <!-- 50% Threshold Crosshairs -->
-                <line x1="420" y1="60" x2="420" y2="700" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" />
-                <line x1="100" y1="380" x2="740" y2="380" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" />
+                <line x1="430" y1="80" x2="430" y2="680" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" />
+                <line x1="110" y1="380" x2="750" y2="380" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" />
 
-                <!-- Axes -->
-                <line x1="100" y1="710" x2="100" y2="40" stroke="#0f172a" stroke-width="2.5" marker-end="url(#arrowHead)" />
-                <line x1="90" y1="700" x2="760" y2="700" stroke="#0f172a" stroke-width="2.5" marker-end="url(#arrowHead)" />
+                <!-- Axes with Arrow Heads -->
+                <line x1="110" y1="690" x2="110" y2="60" stroke="#0f172a" stroke-width="2.5" marker-end="url(#arrowHead)" />
+                <line x1="100" y1="680" x2="780" y2="680" stroke="#0f172a" stroke-width="2.5" marker-end="url(#arrowHead)" />
 
                 <!-- Axis Labels & Ticks -->
                 <g font-size="10" font-family="monospace" fill="#475569" text-anchor="end">
-                  <line x1="94" y1="60" x2="100" y2="60" stroke="#0f172a" stroke-width="2" />
-                  <text x="88" y="64">100%</text>
-                  <line x1="94" y1="220" x2="100" y2="220" stroke="#0f172a" stroke-width="1.5" />
-                  <text x="88" y="224">75%</text>
-                  <line x1="92" y1="380" x2="100" y2="380" stroke="#0f172a" stroke-width="2" />
-                  <text x="88" y="384" font-weight="bold" fill="#0f172a">50%</text>
-                  <line x1="94" y1="540" x2="100" y2="540" stroke="#0f172a" stroke-width="1.5" />
-                  <text x="88" y="544">25%</text>
-                  <line x1="94" y1="700" x2="100" y2="700" stroke="#0f172a" stroke-width="2" />
-                  <text x="88" y="704">0%</text>
+                  <line x1="104" y1="80" x2="110" y2="80" stroke="#0f172a" stroke-width="2" />
+                  <text x="98" y="84">100%</text>
+                  <line x1="104" y1="230" x2="110" y2="230" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="98" y="234">75%</text>
+                  <line x1="102" y1="380" x2="110" y2="380" stroke="#0f172a" stroke-width="2" />
+                  <text x="98" y="384" font-weight="bold" fill="#0f172a">50%</text>
+                  <line x1="104" y1="530" x2="110" y2="530" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="98" y="534">25%</text>
+                  <line x1="104" y1="680" x2="110" y2="680" stroke="#0f172a" stroke-width="2" />
+                  <text x="98" y="684">0%</text>
                 </g>
 
                 <g font-size="10" font-family="monospace" fill="#475569" text-anchor="middle">
-                  <line x1="100" y1="700" x2="100" y2="706" stroke="#0f172a" stroke-width="2" />
-                  <text x="100" y="722">0%</text>
-                  <line x1="260" y1="700" x2="260" y2="706" stroke="#0f172a" stroke-width="1.5" />
-                  <text x="260" y="722">25%</text>
-                  <line x1="420" y1="700" x2="420" y2="708" stroke="#0f172a" stroke-width="2" />
-                  <text x="420" y="722" font-weight="bold" fill="#0f172a">50%</text>
-                  <line x1="580" y1="700" x2="580" y2="706" stroke="#0f172a" stroke-width="1.5" />
-                  <text x="580" y="722">75%</text>
-                  <line x1="740" y1="700" x2="740" y2="706" stroke="#0f172a" stroke-width="2" />
-                  <text x="740" y="722">100%</text>
+                  <line x1="110" y1="680" x2="110" y2="686" stroke="#0f172a" stroke-width="2" />
+                  <text x="110" y="702">0%</text>
+                  <line x1="270" y1="680" x2="270" y2="686" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="270" y="702">25%</text>
+                  <line x1="430" y1="680" x2="430" y2="688" stroke="#0f172a" stroke-width="2" />
+                  <text x="430" y="702" font-weight="bold" fill="#0f172a">50%</text>
+                  <line x1="590" y1="680" x2="590" y2="686" stroke="#0f172a" stroke-width="1.5" />
+                  <text x="590" y="702">75%</text>
+                  <line x1="750" y1="680" x2="750" y2="688" stroke="#0f172a" stroke-width="2" />
+                  <text x="750" y="702">100%</text>
                 </g>
 
-                <g transform="translate(30, 380) rotate(-90)">
-                  <text text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a" letter-spacing="1">
+                <!-- Axis Titles -->
+                <g transform="translate(35, 380) rotate(-90)">
+                  <text text-anchor="middle" font-size="11.5" font-weight="800" fill="#0f172a" letter-spacing="0.8">
                     ▲ STATUTORY POWER &amp; DECISION AUTHORITY (Y-AXIS)
                   </text>
-                  <text y="14" text-anchor="middle" font-size="9" fill="#64748b">
+                  <text y="13" text-anchor="middle" font-size="8.5" fill="#64748b">
                     (Veto, Contracting, Rulemaking, Resource Allocation)
                   </text>
                 </g>
 
-                <g transform="translate(420, 765)">
-                  <text text-anchor="middle" font-size="12" font-weight="800" fill="#0f172a" letter-spacing="1">
+                <g transform="translate(430, 750)">
+                  <text text-anchor="middle" font-size="11.5" font-weight="800" fill="#0f172a" letter-spacing="0.8">
                     OPERATIONAL INTEREST &amp; ALIGNMENT (X-AXIS) ►
                   </text>
-                  <text y="14" text-anchor="middle" font-size="9" fill="#64748b">
+                  <text y="13" text-anchor="middle" font-size="8.5" fill="#64748b">
                     (Traceability Priority, Patient Safety, Regulatory Mandate Commitment)
                   </text>
                 </g>
@@ -411,7 +424,7 @@
                 <span class="text-[10px] bg-slate-200 text-slate-700 font-bold px-2 py-0.5 rounded">Facility Level</span>
               </div>
               <p class="text-xs text-slate-600 mt-1">
-                Convene joint session with <strong>Food and Nutrition Services (FNS)</strong>, <strong>Infection Prevention</strong>, and <strong>Health Informatics</strong> to execute a baseline mock recall drill.
+                Convene joint session with <strong>Dr. Michelle McMacken (Nutrition &amp; Lifestyle Medicine)</strong>, <strong>Dr. Syra Madad (Special Pathogens Program)</strong>, and <strong>Hillary Jalon (SVP &amp; Chief Quality Officer)</strong> to execute a baseline mock recall drill and clinical risk assessment.
               </p>
             </div>
           </div>
@@ -602,108 +615,44 @@
   </div>
 
   <script>
-    function toggleShareModal(show) {
-      const modal = document.getElementById('shareModal');
-      if (!modal) return;
-      if (show) modal.classList.remove('hidden');
-      else modal.classList.add('hidden');
-    }
-
-    function toggleMapSubView(view) {
-      const graphContainer = document.getElementById('subviewGraphContainer');
-      const hierarchyContainer = document.getElementById('subviewHierarchyContainer');
-      const btnGraph = document.getElementById('subview-btn-graph');
-      const btnHierarchy = document.getElementById('subview-btn-hierarchy');
-
-      if (view === 'graph') {
-        graphContainer.classList.remove('hidden');
-        hierarchyContainer.classList.add('hidden');
-        btnGraph.className = "px-2.5 py-1 rounded-md bg-emerald-600 text-white font-semibold transition";
-        btnHierarchy.className = "px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
-      } else {
-        graphContainer.classList.add('hidden');
-        hierarchyContainer.classList.remove('hidden');
-        btnHierarchy.className = "px-2.5 py-1 rounded-md bg-emerald-600 text-white font-semibold transition";
-        btnGraph.className = "px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
-      }
-    }
-
-    function downloadHtmlFile() {
-      const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-      const blob = new Blob([htmlContent], { type: 'text/html' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'NYC_Produce_Traceability_Power_Map.html';
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-    }
-
-    function copyExecutiveSummary() {
-      const text = `NYC Produce Traceability Stakeholder Power Map & Governance Hierarchy\n\n` +
-        `• Tier 1: Apex Authority\n  - Department: NYC Board of Health\n  - Current Representative: Dr. Alister Martin (Chair) & Board Members\n\n` +
-        `• Tier 2: Public Health Administration & Legislative Health Oversight (Parallel)\n  - Department: NYC Dept of Health & Mental Hygiene (DOHMH) | Rep: Dr. Alister Martin\n  - Department: NYC Council Committee on Health | Rep: CM Lynn Schulman, Chair\n\n` +
-        `• Tier 3: Hospital Systems & Legislative Council (Parallel)\n  - Department: NYC Council Committee on Hospitals | Rep: CM Mercedes Narcisse, Chair\n  - Department: NYC Health + Hospitals | Rep: Dr. Mitchell Katz (CEO) & Danielle DiBari (CPO)\n  - Department: Private Hospitals & GNYHA | Rep: Kenneth E. Raske (Pres., GNYHA)\n\n` +
-        `• Tier 4: Facility Executive Leadership\n  - Department: Hospital CEO & Executive Administration | Rep: Facility CEO & Cabinet\n\n` +
-        `• Tier 5: Clinical Interdisciplinary Champions (Parallel)\n  - Department: Inpatient Oncology Units | Rep: Unit Nurse Champions & Shared Governance Chairs\n  - Department: Food & Nutrition Services (FNS) | Rep: Director of Clinical Nutrition & FNS Leadership\n  - Department: Infection Prevention & Control | Rep: Hospital Epidemiologists & ICP Specialists\n  - Department: Quality Improvement (QI) | Rep: Director of QA & Patient Safety Officer\n\n` +
-        `• Tier 6: Food Supply Chain Foundation\n  - Department: Commercial Produce Distribution | Rep: Broadline Food Distributors & Shippers`;
-
-      const tempInput = document.createElement('textarea');
-      tempInput.value = text;
-      document.body.appendChild(tempInput);
-      tempInput.select();
-      document.execCommand('copy');
-      document.body.removeChild(tempInput);
-      alertBox('Summary copied to clipboard!');
-    }
-
-    function alertBox(msg) {
-      const banner = document.createElement('div');
-      banner.className = 'fixed bottom-4 right-4 bg-slate-900 text-white text-xs px-4 py-2.5 rounded-xl shadow-2xl z-50 transition-opacity duration-300';
-      banner.innerText = msg;
-      document.body.appendChild(banner);
-      setTimeout(() => {
-        banner.style.opacity = '0';
-        setTimeout(() => banner.remove(), 300);
-      }, 2500);
-    }
-
     const stakeholders = [
-      // TIER 1: APEX (At top)
+      // TIER 1: APEX (Quadrant 1)
       {
         id: "board_of_health",
         department: "NYC Board of Health",
+        displayDept: "NYC Board of Health",
         representative: "Dr. Alister Martin (Chair) & Board Members",
+        displayRep: "Dr. A. Martin & Board Members",
         tier: "TIER1_2",
         tierLabel: "Tier 1: Apex Rulemaking Authority",
         name: "NYC Board of Health",
         title: "Statutory Legislative Regulatory Board",
         agency: "New York City Department of Health",
         quadrant: 1,
-        powerScore: 98,
-        interestScore: 82,
-        offset: { dx: 14, dy: -6 },
+        powerScore: 86,
+        interestScore: 78,
+        offset: { dx: 14, dy: -18 },
         authority: "Positioned at the apex of municipal food safety governance. Holds exclusive statutory authority to amend NYC Health Code Article 81 (§81.04) to require hospital kitchens to maintain electronic lot-tracking for leafy greens.",
         risk: "Requires formal notice-and-comment regulatory cycle and defensible clinical evidentiary justification to outpace federal 2028 enforcement timeline.",
         directive: "Submit a formal petition for rulemaking to amend §81.04, supported by DOHMH Cyclospora surveillance data and nurse-led clinical risk profiles."
       },
 
-      // TIER 2: UNDER TIER 1, PARALLEL
+      // TIER 2: HEALTH DEPT & LEGISLATIVE HEALTH (Tiers 1 & 2)
       {
         id: "dohmh",
         department: "NYC Dept of Health & Mental Hygiene (DOHMH)",
+        displayDept: "NYC Health Dept (DOHMH)",
         representative: "Dr. Alister Martin, Health Commissioner",
+        displayRep: "Dr. Alister Martin, Comm.",
         tier: "TIER1_2",
         tierLabel: "Tier 2: Public Health Administration",
         name: "NYC Dept of Health & Mental Hygiene (DOHMH)",
         title: "Health Commissioner & Executive Staff",
         agency: "Executive Public Health Agency",
         quadrant: 1,
-        powerScore: 90,
-        interestScore: 86,
-        offset: { dx: 14, dy: -6 },
+        powerScore: 74,
+        interestScore: 62,
+        offset: { dx: -206, dy: -12 },
         authority: "Regulatory enforcement arm under the Board of Health. Can develop the official policy proposal, mobilize surveillance data on Cyclospora clusters, oversee hospital inspections, and formally recommend Article 81 amendments.",
         risk: "Administrative burden; balancing produce traceback enforcement with citywide restaurant inspection workloads.",
         directive: "Deliver turnkey draft of proposed §81.04 produce traceability amendment accompanied by local clinical outbreak burden data."
@@ -711,35 +660,39 @@
       {
         id: "council_health",
         department: "NYC Council Committee on Health",
+        displayDept: "NYC Council Health Comm.",
         representative: "Council Member Lynn Schulman, Chair",
+        displayRep: "CM Lynn Schulman, Chair",
         tier: "TIER1_2",
         tierLabel: "Tier 2: Legislative Oversight (Parallel)",
         name: "NYC Council Committee on Health",
         title: "Chair, Committee on Health",
         agency: "New York City Council",
         quadrant: 2,
-        powerScore: 86,
-        interestScore: 48,
-        offset: { dx: 14, dy: -6 },
+        powerScore: 82,
+        interestScore: 32,
+        offset: { dx: 14, dy: -16 },
         authority: "Parallel to DOHMH at the municipal oversight level. Holds legislative authority over city public health codes, conducts oversight hearings, requests DOHMH surveillance data, and introduces municipal bills or funding appropriations.",
         risk: "Committee agenda competition with general hospital budget and emergency department staffing priorities.",
         directive: "Request a public oversight hearing on hospital foodborne illness risks and invite oncology nurse leaders to testify."
       },
 
-      // TIER 3: UNDER TIER 2, PARALLEL
+      // TIER 3: HOSPITAL SYSTEMS & LEGISLATIVE HOSPITALS
       {
         id: "council_hospitals",
         department: "NYC Council Committee on Hospitals",
+        displayDept: "NYC Council Hospital Comm.",
         representative: "Council Member Mercedes Narcisse, Chair",
+        displayRep: "CM Mercedes Narcisse, Chair",
         tier: "TIER3_4",
         tierLabel: "Tier 3: Legislative Hospital Oversight (Parallel)",
         name: "NYC Council Committee on Hospitals",
         title: "Chair, Committee on Hospitals",
         agency: "New York City Council",
         quadrant: 2,
-        powerScore: 78,
-        interestScore: 46,
-        offset: { dx: 14, dy: -6 },
+        powerScore: 68,
+        interestScore: 28,
+        offset: { dx: -206, dy: -10 },
         authority: "Conducts legislative oversight of both public and private hospital facilities across the five boroughs; can convene hospital executives, nurse leaders, and food safety experts.",
         risk: "Focus often gravitates toward general nurse-to-patient staffing ratios rather than food chain logistics.",
         directive: "Connect contaminated produce to inpatient clinical outcomes among vulnerable oncology and geriatric cohorts."
@@ -747,16 +700,18 @@
       {
         id: "nyc_hh",
         department: "NYC Health + Hospitals (Central Office)",
+        displayDept: "NYC Health + Hospitals",
         representative: "Dr. Mitchell Katz (CEO) & Danielle DiBari (CPO)",
+        displayRep: "Dr. M. Katz & D. DiBari (CPO)",
         tier: "TIER3_4",
         tierLabel: "Tier 3: Public Hospital System (Parallel)",
         name: "NYC Health + Hospitals",
         title: "President/CEO & Chief Procurement Officer",
         agency: "Public Health Care System (Central Office)",
         quadrant: 1,
-        powerScore: 82,
-        interestScore: 90,
-        offset: { dx: -200, dy: -6 },
+        powerScore: 68,
+        interestScore: 86,
+        offset: { dx: 14, dy: -6 },
         authority: "Governs the nation's largest municipal hospital system (11 acute hospitals). Can unilaterally authorize an institutional pilot across public hospitals, mandating electronic lot-tracking clauses into produce purchasing contracts ahead of 2028.",
         risk: "Municipal health system financial constraints and dietary union operating workflows.",
         directive: "Incorporate standardized Critical Tracking Event (CTE) specifications into upcoming 2027 broadline produce purchasing contracts."
@@ -764,124 +719,138 @@
       {
         id: "private_gnyha",
         department: "Private Hospitals & GNYHA",
+        displayDept: "Private Hospitals & GNYHA",
         representative: "Kenneth E. Raske (Pres., GNYHA) & Hospital CEOs",
+        displayRep: "K. Raske & Hospital CEOs",
         tier: "TIER3_4",
         tierLabel: "Tier 3: Voluntary Hospital Consortium (Parallel)",
         name: "Private Hospitals & GNYHA",
         title: "Hospital Executives & Greater NY Hospital Association",
         agency: "Voluntary & Non-Profit Healthcare Sector",
         quadrant: 2,
-        powerScore: 74,
-        interestScore: 38,
-        offset: { dx: 14, dy: -6 },
+        powerScore: 56,
+        interestScore: 22,
+        offset: { dx: 14, dy: 6 },
         authority: "Essential counterpart to NYC H+H; represents major voluntary medical centers (Mount Sinai, NYP, NYU Langone, Northwell). Their alignment is vital if the policy is codified across private facilities.",
         risk: "May resist unfunded administrative mandates or complex software logging requirements.",
         directive: "Share NYC H+H pilot feasibility data early to demonstrate that electronic distributor records minimize administrative overhead."
       },
 
-      // TIER 4: UNDER TIER 3 (Hospital CEO / Administration)
+      // TIER 4: HOSPITAL FACILITY EXECUTIVE LEADERSHIP
       {
         id: "hospital_ceo",
         department: "Hospital Facility Administration",
+        displayDept: "Hospital Administration",
         representative: "Facility Chief Executive Officer & Executive Cabinet",
+        displayRep: "Facility CEO & Cabinet",
         tier: "TIER3_4",
         tierLabel: "Tier 4: Facility Executive Leadership",
         name: "Hospital CEO & Administration",
         title: "Facility Chief Executive Officer & COO",
         agency: "Individual Hospital Facility Administration",
         quadrant: 1,
-        powerScore: 58,
-        interestScore: 72,
-        offset: { dx: 14, dy: -6 },
+        powerScore: 56,
+        interestScore: 68,
+        offset: { dx: 14, dy: 6 },
         authority: "Holds direct operational budget and managerial authority for the hospital facility. Approves dock-receiving scanning equipment, signs off on CNO/CMO policy elevation, and transmits policy requests to Central Office.",
         risk: "Wary of operational bottlenecks or increased patient meal tray preparation costs.",
         directive: "Position rapid produce traceability as clinical risk insulation against Joint Commission penalties and hospital-acquired illness litigation."
       },
 
-      // TIER 5: UNDER TIER 4 (Interdisciplinary Clinical Disciplines)
+      // TIER 5: CLINICAL & INTERDISCIPLINARY DISCIPLINES (Quadrant 3 - Focused on NYC Health + Hospitals)
       {
         id: "oncology_nursing",
-        department: "Inpatient Oncology & Transplant Units",
-        representative: "Unit Nurse Champions & Bedside Shared Governance Chairs",
+        department: "NYC H+H Inpatient Oncology & Transplant Units",
+        displayDept: "Inpatient Oncology Units",
+        representative: "Bedside Nurse Champions & Shared Governance Chairs",
+        displayRep: "Bedside Nurse Champions",
         tier: "TIER5",
         tierLabel: "Tier 5: Clinical Bedside Advocates",
         name: "Oncology Nurses & Clinicians",
         title: "Inpatient Bedside Oncology & Transplant Champions",
-        agency: "Inpatient Oncology & Transplant Divisions",
+        agency: "NYC Health + Hospitals Clinical Shared Governance",
         quadrant: 3,
-        powerScore: 36,
-        interestScore: 98,
-        offset: { dx: -200, dy: -18 },
+        powerScore: 42,
+        interestScore: 88,
+        offset: { dx: 14, dy: -16 },
         authority: "First to identify symptoms of severe foodborne illness in vulnerable immunocompromised patients. Initiates internal clinical shared governance escalation and provides the clinical rationale for requiring verified produce traceability.",
         risk: "Must follow internal escalation hierarchy; cannot lobby external municipal bodies directly without CNO authorization.",
         directive: "Document clinical risk profiles and utilize clinical shared governance councils to elevate produce safety to the Chief Nursing Officer."
       },
       {
         id: "dietitians_fns",
-        department: "Food & Nutrition Services (FNS)",
-        representative: "Director of Clinical Nutrition & FNS Culinary Leadership",
+        department: "NYC H+H Nutrition & Lifestyle Medicine",
+        displayDept: "Nutrition & Food Services",
+        representative: "Dr. Michelle McMacken, Executive Director",
+        displayRep: "Dr. M. McMacken, Exec. Dir.",
         tier: "TIER5",
-        tierLabel: "Tier 5: Dietary Operations",
-        name: "Registered Dietitians & Food/Nutrition Services",
-        title: "Clinical Nutritionists & FNS Directors",
-        agency: "Hospital Food & Nutrition Services Department",
+        tierLabel: "Tier 5: Dietary Transformation & Operations",
+        name: "Dr. Michelle McMacken (Nutrition & Lifestyle Medicine)",
+        title: "Executive Director of Nutrition and Lifestyle Medicine",
+        agency: "NYC Health + Hospitals (System-wide Executive Lead)",
         quadrant: 3,
-        powerScore: 32,
-        interestScore: 94,
-        offset: { dx: 14, dy: 14 },
-        authority: "Manages hospital dietary receiving, meal assembly, and patient tray distribution. Inspects produce cartons at receiving docks, tracks meal service logs to specific inpatient beds, and executes produce holds during recalls.",
-        risk: "Staffing limitations in commercial kitchens and lack of digital barcode scanners at receiving docks.",
-        directive: "Partner with nursing champions to run baseline 24-hour mock trace drills on iceberg lettuce inventory."
+        powerScore: 24,
+        interestScore: 84,
+        offset: { dx: 14, dy: 6 },
+        authority: "Oversees system-wide clinical nutrition education, food service transformation (such as introducing plant-based meals), and preventative lifestyle medicine programs across all NYC H+H facilities. Can embed electronic lot-tracking and mock recall verification into kitchen receiving operations.",
+        risk: "Balancing patient meal tray satisfaction and culinary workflows with digital barcode-scanning requirements at culinary receiving docks.",
+        directive: "Incorporate mandatory FSMA 204 electronic lot verification into system-wide hospital food preparation and patient tray distribution standards."
       },
       {
         id: "infection_prevention",
-        department: "Infection Prevention & Control",
-        representative: "Hospital Epidemiologists & ICP Quality Specialists",
+        department: "NYC H+H Special Pathogens Program",
+        displayDept: "Special Pathogens Program",
+        representative: "Dr. Syra Madad, Chief Biopreparedness Officer",
+        displayRep: "Dr. Syra Madad, Biopreparedness",
         tier: "TIER5",
-        tierLabel: "Tier 5: Hospital Epidemiology",
-        name: "Infection Prevention & Control",
-        title: "Hospital Epidemiologists & ICP Specialists",
-        agency: "Division of Quality & Infection Prevention",
+        tierLabel: "Tier 5: System-wide Biopreparedness & Epidemiology",
+        name: "Dr. Syra Madad (Special Pathogens & Biopreparedness)",
+        title: "Senior Director, Special Pathogens Program & Chief Biopreparedness Officer",
+        agency: "NYC Health + Hospitals (System-wide Biopreparedness Lead)",
         quadrant: 3,
-        powerScore: 34,
-        interestScore: 95,
-        offset: { dx: 14, dy: -18 },
-        authority: "Monitors hospital-wide gastrointestinal disease clusters, coordinates diagnostic testing (GI PCR panels for Cyclospora cayetanensis), and serves as the mandatory liaison reporting outbreaks to DOHMH.",
-        risk: "Cyclospora incubation periods (1–2 weeks) can delay clinical suspicion until after produce has been consumed.",
-        directive: "Establish automated electronic health record (EHR) alerts for unexplained inpatient diarrhea among oncology patients."
+        powerScore: 38,
+        interestScore: 66,
+        offset: { dx: -206, dy: -14 },
+        authority: "Serves as the Senior Director of the System-wide Special Pathogens Program and Chief Biopreparedness Officer for the network. Directly coordinates biological threat readiness, syndromic surveillance for parasitic/foodborne outbreaks (such as Cyclospora cayetanensis), and hospital containment protocols.",
+        risk: "Prolonged Cyclospora incubation period (1–2 weeks) delays syndromic clinical detection until after contaminated lettuce inventory has been consumed.",
+        directive: "Establish system-wide biopreparedness alerts and rapid diagnostic PCR reflex testing protocols for unexplained gastroenteritis in vulnerable inpatient wards."
       },
       {
         id: "quality_improvement",
-        department: "Quality Improvement & Patient Safety",
-        representative: "Director of Quality Assurance & Patient Safety Officer",
+        department: "NYC H+H Quality & Patient Safety",
+        displayDept: "Corporate Quality & Safety",
+        representative: "Hillary Jalon, SVP & Chief Quality Officer",
+        displayRep: "Hillary Jalon, SVP & CQO",
         tier: "TIER5",
-        tierLabel: "Tier 5: Patient Safety & Audits",
-        name: "Quality Improvement (QI) & Patient Safety",
-        title: "Directors of Quality Assurance & Patient Safety Officers",
-        agency: "Hospital Quality & Regulatory Affairs",
+        tierLabel: "Tier 5: Corporate Quality & Patient Safety",
+        name: "Hillary Jalon (Quality & Patient Safety)",
+        title: "Senior Vice President and Chief Quality Officer",
+        agency: "NYC Health + Hospitals (System-wide Corporate Lead)",
         quadrant: 3,
-        powerScore: 30,
-        interestScore: 90,
-        offset: { dx: -200, dy: 14 },
-        authority: "Audits facility compliance with patient safety standards, conducts root cause analyses on adverse events, tracks electronic recall response times, and presents risk mitigation data to the hospital CEO.",
-        risk: "Competing clinical quality metrics and reporting mandates (sepsis bundles, CAUTI, CLABSI).",
-        directive: "Incorporate rapid produce mock recalls into annual hospital disaster preparedness and safety performance scorecards."
+        powerScore: 26,
+        interestScore: 58,
+        offset: { dx: -206, dy: 8 },
+        authority: "Directly oversees all core quality functions across the system, including quality assurance, regulatory compliance, patient safety, and performance improvement. Embeds produce traceability audits into annual hospital risk management and Joint Commission accreditation preparedness.",
+        risk: "Balancing foodborne illness prevention against competing regulatory and clinical safety reporting priorities (e.g., sepsis bundles, CAUTI, CLABSI).",
+        directive: "Mandate rapid 24-hour produce mock recall drills as an official NYC H+H corporate quality and patient safety benchmark across all 11 acute care facilities."
       },
 
-      // TIER 6: UNDER TIER 5 (Food Supply Chain Foundation)
+      // TIER 6: FOOD SUPPLY CHAIN FOUNDATION (Quadrant 4)
       {
         id: "produce_distributors",
         department: "Commercial Food Distributors & Farm Shippers",
+        displayDept: "Produce Supply Chain",
         representative: "Contracted Broadline Food Distributors & Regional Farm Shippers",
+        displayRep: "Commercial Distributors",
         tier: "TIER6",
         tierLabel: "Tier 6: Food Supply Chain Foundation",
         name: "Produce Growers & Commercial Distributors",
         title: "Commercial Food Distributors & Regional Farm Shippers",
         agency: "Commercial Food Supply Chain",
         quadrant: 4,
-        powerScore: 16,
-        interestScore: 34,
-        offset: { dx: 14, dy: -6 },
+        powerScore: 12,
+        interestScore: 22,
+        offset: { dx: 14, dy: 10 },
         authority: "Must physically capture and transmit FDA Key Data Elements (KDEs)—including harvest location, cooler, lot code, and pack date—via electronic manifests down to hospital receiving docks.",
         risk: "May push back on contract terms or claim lot-tracking software integration imposes cost surcharges.",
         directive: "Leverage hospital procurement buying power to enforce digital lot compliance in RFP bidding standards without added carton fees."
@@ -894,8 +863,11 @@
     let isInitialized = false;
 
     function calcCoordinates(interest, power) {
-      const svgX = 100 + (interest / 100) * 640;
-      const svgY = 700 - (power / 100) * 640;
+      // Coordinate plane spans:
+      // X: from 110 (0%) to 750 (100%) -> width 640
+      // Y: from 680 (0%) to 80 (100%) -> height 600
+      const svgX = 110 + (interest / 100) * 640;
+      const svgY = 680 - (power / 100) * 600;
       return { x: svgX, y: svgY };
     }
 
@@ -941,22 +913,34 @@
         const ringWidth = isSelected ? 4 : 2;
         const ringStroke = isSelected ? '#0f172a' : stroke;
 
-        const deptText = s.department;
-        const repText = s.representative;
-        const offX = s.offset ? s.offset.dx : 14;
-        const offY = s.offset ? s.offset.dy : -6;
-        const badgeWidth = 195;
-        const badgeHeight = 30;
+        const badgeWidth = 196;
+        const badgeHeight = 28;
+        let offX = s.offset ? s.offset.dx : 14;
+        let offY = s.offset ? s.offset.dy : -6;
+
+        // Ensure badge doesn't overflow right canvas boundary
+        if (coords.x + offX + badgeWidth > 945) {
+          offX = -badgeWidth - 14;
+        }
+
+        const deptText = s.displayDept || s.department;
+        const repText = s.displayRep || s.representative;
+
+        // Draw connecting leader tick from the node center to its label badge
+        const leaderLineX2 = offX < 0 ? (coords.x + offX + badgeWidth) : (coords.x + offX);
+        const leaderLineY2 = coords.y + offY + (badgeHeight / 2) - 10;
+        const leaderLine = `<line x1="${coords.x}" y1="${coords.y}" x2="${leaderLineX2}" y2="${leaderLineY2}" stroke="${stroke}" stroke-width="1.2" stroke-dasharray="2,2" opacity="0.8" />`;
 
         g.innerHTML = `
           ${pulseSvg}
-          <circle cx="${coords.x}" cy="${coords.y}" r="11" fill="${fill}" stroke="${ringStroke}" stroke-width="${ringWidth}" filter="url(#shadowGlow)" class="node-core" />
-          <circle cx="${coords.x}" cy="${coords.y}" r="3.5" fill="#ffffff" />
+          ${leaderLine}
+          <circle cx="${coords.x}" cy="${coords.y}" r="8.5" fill="${fill}" stroke="${ringStroke}" stroke-width="${ringWidth}" filter="url(#shadowGlow)" class="node-core" />
+          <circle cx="${coords.x}" cy="${coords.y}" r="3" fill="#ffffff" />
           
           <g transform="translate(${coords.x + offX}, ${coords.y + offY})">
-            <rect x="0" y="-10" width="${badgeWidth}" height="${badgeHeight}" rx="5" fill="#ffffff" fill-opacity="0.97" stroke="${ringStroke}" stroke-width="1.2" filter="drop-shadow(0 1px 2px rgba(0,0,0,0.08))" />
-            <text x="6" y="3" font-size="8.5" font-weight="800" fill="#0f172a" font-family="Inter, sans-serif">🏢 ${deptText.length > 25 ? deptText.substring(0, 24) + '...' : deptText}</text>
-            <text x="6" y="15" font-size="7.5" font-weight="600" fill="${repColor}" font-family="Inter, sans-serif">👤 ${repText.length > 27 ? repText.substring(0, 26) + '...' : repText}</text>
+            <rect x="0" y="-10" width="${badgeWidth}" height="${badgeHeight}" rx="5" fill="#ffffff" fill-opacity="0.98" stroke="${ringStroke}" stroke-width="1.15" filter="drop-shadow(0 1px 3px rgba(0,0,0,0.12))" />
+            <text x="6" y="2.5" font-size="7.8" font-weight="800" fill="#0f172a" font-family="Inter, sans-serif">🏢 ${deptText}</text>
+            <text x="6" y="13.5" font-size="6.8" font-weight="600" fill="${repColor}" font-family="Inter, sans-serif">👤 ${repText}</text>
           </g>
         `;
 
@@ -1002,8 +986,8 @@
         },
         {
           id: "T5",
-          label: "TIER 5: CLINICAL & INTERDISCIPLINARY IMPLEMENTATION TEAMS (PARALLEL)",
-          subtitle: "Frontline Patient Safety, Clinical Diarrhea Detection, Dietary Receiving, and Quality Audits",
+          label: "TIER 5: CLINICAL & INTERDISCIPLINARY IMPLEMENTATION TEAMS (NYC HEALTH + HOSPITALS)",
+          subtitle: "System-wide Leadership: Biopreparedness (Dr. Madad), Corporate Quality (H. Jalon), Nutrition (Dr. McMacken), and Bedside Oncology Champions",
           items: stakeholders.filter(s => s.id === 'oncology_nursing' || s.id === 'dietitians_fns' || s.id === 'infection_prevention' || s.id === 'quality_improvement')
         },
         {
@@ -1059,13 +1043,13 @@
         lineX.setAttribute('x1', coords.x);
         lineX.setAttribute('y1', coords.y);
         lineX.setAttribute('x2', coords.x);
-        lineX.setAttribute('y2', 700);
+        lineX.setAttribute('y2', 680);
         lineX.setAttribute('stroke', s.quadrant === 1 ? '#059669' : s.quadrant === 2 ? '#b45309' : '#2563eb');
         lineX.setAttribute('opacity', '1');
 
         lineY.setAttribute('x1', coords.x);
         lineY.setAttribute('y1', coords.y);
-        lineY.setAttribute('x2', 100);
+        lineY.setAttribute('x2', 110);
         lineY.setAttribute('y2', coords.y);
         lineY.setAttribute('stroke', s.quadrant === 1 ? '#059669' : s.quadrant === 2 ? '#b45309' : '#2563eb');
         lineY.setAttribute('opacity', '1');
@@ -1089,9 +1073,11 @@
           <div class="text-[10px] text-slate-300">Authority: <strong>${s.powerScore}%</strong> | Interest: <strong>${s.interestScore}%</strong></div>
         `;
 
-        const svgRect = document.getElementById('squareMapSvg').getBoundingClientRect();
-        const pctX = coords.x / 800;
-        const pctY = coords.y / 800;
+        const svgEl = document.getElementById('squareMapSvg');
+        const svgRect = svgEl.getBoundingClientRect();
+        const vb = svgEl.viewBox.baseVal;
+        const pctX = (coords.x - vb.x) / vb.width;
+        const pctY = (coords.y - vb.y) / vb.height;
 
         const leftPos = Math.min(Math.max(pctX * svgRect.width - 20, 15), svgRect.width - 240);
         const topPos = coords.y < 200 ? (pctY * svgRect.height + 20) : (pctY * svgRect.height - 85);
@@ -1226,6 +1212,55 @@
       selectStakeholder('board_of_health');
     }
 
+    let currentZoom = 1.05; // Slightly zoomed in by default
+    const BASE_VB = { x: 12, y: 22, w: 900, h: 765 };
+
+    function applyZoom() {
+      const svg = document.getElementById('squareMapSvg');
+      if (!svg) return;
+      const cx = BASE_VB.x + BASE_VB.w / 2;
+      const cy = BASE_VB.y + BASE_VB.h / 2;
+      const newW = BASE_VB.w / currentZoom;
+      const newH = BASE_VB.h / currentZoom;
+      const newX = cx - newW / 2;
+      const newY = cy - newH / 2;
+      svg.setAttribute('viewBox', `${newX} ${newY} ${newW} ${newH}`);
+      const display = document.getElementById('zoomLevelDisplay');
+      if (display) display.innerText = `${Math.round(currentZoom * 100)}%`;
+    }
+
+    function zoomMap(delta) {
+      currentZoom = Math.min(Math.max(currentZoom + delta, 0.8), 1.5);
+      applyZoom();
+    }
+
+    function resetZoomMap() {
+      currentZoom = 1.05;
+      applyZoom();
+    }
+
+    function toggleMapSubView(view) {
+      const graphContainer = document.getElementById('subviewGraphContainer');
+      const hierarchyContainer = document.getElementById('subviewHierarchyContainer');
+      const btnGraph = document.getElementById('subview-btn-graph');
+      const btnHierarchy = document.getElementById('subview-btn-hierarchy');
+      const zoomControls = document.getElementById('mapZoomControls');
+
+      if (view === 'graph') {
+        if (graphContainer) graphContainer.classList.remove('hidden');
+        if (hierarchyContainer) hierarchyContainer.classList.add('hidden');
+        if (zoomControls) zoomControls.classList.remove('hidden');
+        if (btnGraph) btnGraph.className = "px-2.5 py-1 rounded-md bg-emerald-600 text-white font-semibold transition";
+        if (btnHierarchy) btnHierarchy.className = "px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
+      } else {
+        if (graphContainer) graphContainer.classList.add('hidden');
+        if (hierarchyContainer) hierarchyContainer.classList.remove('hidden');
+        if (zoomControls) zoomControls.classList.add('hidden');
+        if (btnGraph) btnGraph.className = "px-2.5 py-1 rounded-md bg-slate-100 text-slate-700 hover:bg-slate-200 font-medium transition";
+        if (btnHierarchy) btnHierarchy.className = "px-2.5 py-1 rounded-md bg-emerald-600 text-white font-semibold transition";
+      }
+    }
+
     function switchMainTab(tab) {
       const tabs = ['map', 'escalation', 'policy'];
       tabs.forEach(t => {
@@ -1253,9 +1288,9 @@
         "[00:01:10] DOHMH Alert: Contaminated Iceberg Lettuce lot CYC-904-B detected via clinical cluster.",
         "[00:04:45] Querying NYC H+H Central EDI & Broadline Distributor electronic shipping manifest...",
         "[00:08:20] Match confirmed: 72 cases delivered to hospital culinary receiving docks.",
-        "[00:14:50] Cross-checking Registered Dietitians & Food/Nutrition Services (FNS) meal prep logs...",
+        "[00:14:50] Cross-checking Dr. Michelle McMacken's Nutrition & Lifestyle Medicine culinary logs...",
         "[00:21:10] Traced to 118 inpatient salad trays served across Inpatient Oncology & Bone Marrow units.",
-        "[00:23:15] Infection Prevention & Bedside Oncology Nurses alerted; remaining lettuce quarantined.",
+        "[00:23:15] Dr. Syra Madad (Special Pathogens) & Hillary Jalon (Corporate Quality) coordinate quarantine.",
         "[00:24:00] DRILL COMPLETE: Traceback accomplished in 0.40 hrs. Full compliance with FSMA 204."
       ];
 
@@ -1282,6 +1317,7 @@
     function initializeApp() {
       if (isInitialized) return;
       isInitialized = true;
+      applyZoom();
       renderSquareChart();
       renderHierarchyTree();
       renderQuickRoster();
